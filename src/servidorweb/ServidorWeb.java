@@ -6,40 +6,36 @@ import java.net.*;
 import java.util.*;
 
 public class ServidorWeb {
-
-    public static void main(String[] args) throws IOException {
-       
-        ServerSocket ss = null;
-        ss = new ServerSocket(9090);
+    static private Integer PUERTO = 9090;
+    static private String RUTAPRINC = "C:\\Users\\Alberto\\Documents\\UNIVERSIDAD\\Ampliacion POO\\ServidorWeb\\";
+    static private String DOCPRINC = "index.html";
+    public static void main(String[] args) throws IOException {      
+        ServerSocket socketServidor = new ServerSocket(PUERTO);
 
         while (true){
           try{
-            String documento = muestraContenido("C:\\Users\\Alberto\\Documents\\UNIVERSIDAD\\Ampliacion POO\\ServidorWeb\\index.html");
-            Socket s = ss.accept();
+            //String rutaPrinc = muestraContenido(RUTAPRINC);
+            Socket socketClien = socketServidor.accept();
             System.out.println("Un Cliente");
-            OutputStream os = s.getOutputStream();
-            InputStream is = s.getInputStream();
+            OutputStream os = socketClien.getOutputStream();
+            InputStream is = socketClien.getInputStream();
             byte[] buffer = new byte[4096];
             int nb = is.read(buffer);
-            //System.out.println("Recibo esto cliente: "+nb+"/n/n");
             String res = new String(buffer);
-            //System.out.println(res);
-            String[] datos = GetPeticion.getPeticion(res);
-              /*for (int i = 0; i < datos.length; i++) {
-                 System.out.println(datos[i]);
-              }*/
-              
-            System.out.println(Arrays.toString(datos));
+            Hilo hilo = new Hilo(res, rutaPrinc);
+            hilo.start();
+            //System.out.println(Arrays.toString(datos));
             //System.out.println(datos[0]);
+            
             StringBuffer sb = new StringBuffer();
             
-            sb.append("HTTP/1.1 200 OK\n").append("Date: \n").append("Content-Type: text/html\n").append("Content-Length:"+documento.length());
+            sb.append("HTTP/1.1 200 OK\n").append("Date: \n").append("Content-Type: text/html\n").append("Content-Length:"+rutaPrinc.length());
             sb.append("\n\n");
-            sb.append(documento);
-            //sb.append("<html><body><B>Hola<BR>Mundo</B></body></html>");
+            
+            sb.append(rutaPrinc);
             os.write(sb.toString().getBytes());
             
-            s.close();
+            socketClien.close();
             
           }
           catch(Exception ex)
