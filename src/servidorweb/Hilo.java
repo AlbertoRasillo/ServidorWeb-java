@@ -188,7 +188,7 @@ public class Hilo extends Thread{
                 cabecera=cabecera+"Content-Type: image/gif\r\n";
                 break;
             case 4:
-                cabecera=cabecera+"Content-Type: text/jpeg\r\n";
+                cabecera=cabecera+"Content-Type: image/jpeg\r\n";
                 break;
             case 5:
                 cabecera=cabecera+"Content-Type: application/zip\r\n";
@@ -199,6 +199,7 @@ public class Hilo extends Thread{
                 break;
         }
         cabecera=cabecera+"\r\n";
+        
         return cabecera;
     }
     }
