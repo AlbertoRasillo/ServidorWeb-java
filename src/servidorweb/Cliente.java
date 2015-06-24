@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
@@ -54,32 +55,51 @@ public class Cliente {
     public void setEstado(String estado) {
         this.estado = estado;
     }
-   public static ArrayList<Cliente> cargarUsuarios() throws FileNotFoundException, IOException{
-        ArrayList<Cliente> lista = new ArrayList<Cliente>();
+    public static ArrayList<Cliente> cargarUsuarios() throws FileNotFoundException, IOException{
         try{
             File f = new File(NOMFICHERO);
             if (f.exists()){
                 FileReader fr = new FileReader(NOMFICHERO);
                 BufferedReader br = new BufferedReader(fr);
                 String linea ;
-                lista = new ArrayList<Cliente>();
+                
                 while ((linea = br.readLine())!= null){
                     String tokens[] = linea.split(SEPARADOR);
                     Cliente obj = new Cliente(tokens[0], tokens[1]);
-                    if (tokens[1]== "activo"){
-                        clientes.add(obj);
-                    }
                     if (tokens[1]== "baneado"){
                         clientesBaneados.add(obj);
                     }
-                    lista.add(obj);
+                    clientes.add(obj);
                 }
                 fr.close();
             }    
         } catch(Exception ex){
             System.out.println(ex.toString());
         }
-        return lista;
+        return clientes;
     }
-  
+    public String object2CSV(){
+        StringBuffer sb = new StringBuffer();
+        sb.append(this.coockie);
+        sb.append(";");
+        sb.append(this.estado);
+        sb.append(";");
+        return sb.toString();   
+    }
+    public static void GuardarClientes(ArrayList<Cliente> lista){
+        try{
+            FileWriter fw = new FileWriter(NOMFICHERO, false); 
+            
+            for (Cliente cliente : lista) {
+                fw.write(cliente.object2CSV());
+                fw.write(13);
+                fw.write(10);
+                //--->
+            }
+            fw.close();    
+        }catch(Exception ex){
+            System.out.println(ex.toString());
+        }
+    }
+   
 }
