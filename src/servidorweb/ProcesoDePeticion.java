@@ -4,37 +4,57 @@ package servidorweb;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Alberto
  */
-public class Hilo extends Thread{
+public class ProcesoDePeticion extends Thread{
     private Socket socket;
     private int timeout;
-    static private String RUTAPRINC = "C:\\Users\\Alberto\\Documents\\UNIVERSIDAD\\Ampliacion POO\\ServidorWeb\\";
-    static private String DOCPRINC = "index.html";
+    static  String RUTAPRINC = "C:\\Users\\Axtro\\Desktop\\ServidorWeb-java\\src\\servidorweb\\web\\";
+    static final private String DOCPRINC = "index.html";
     static private String DOCERROR = "error.html";
+    ServidorWeb sw;
     BufferedReader entrada;
     DataOutputStream salida;
     
-    public Hilo(Socket sock){
+    public ProcesoDePeticion(Socket sock, ServidorWeb sw) throws IOException{
         socket = sock;
+        this.sw = sw;
+        entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
     
     @Override
     public void run(){
+            
         try {
-            entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            salida = new DataOutputStream(socket.getOutputStream());
-            respuesta(entrada,salida);
-            entrada.close();
-            salida.close();
-        } catch (Exception e) {
+            respuesta();
+        } catch (IOException ex) {
+            Logger.getLogger(ProcesoDePeticion.class.getName()).log(Level.SEVERE, null, ex); 
         }
-
+        try {
+            entrada.close();
+        } catch (IOException ex) {
+            Logger.getLogger(ProcesoDePeticion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            salida.close();
+        } catch (IOException ex) {
+            Logger.getLogger(ProcesoDePeticion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            socket.close();
+        } catch (IOException ex) {
+            Logger.getLogger(ProcesoDePeticion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            sw.contadorPeticiones--;
+            System.out.println(sw.contadorPeticiones);
     }
-    private void respuesta(BufferedReader entrada, DataOutputStream salida){
+    private void respuesta() throws IOException{
+        salida = new DataOutputStream(socket.getOutputStream());
         int opPeticion = 0;
         String ruta;
         int tipoArchivo = 0;
@@ -46,7 +66,7 @@ public class Hilo extends Thread{
             entrada.readLine();
         } catch (Exception e) {
         }
-        String tipoPetic = peticion.toUpperCase();
+        String tipoPetic = peticion;
         System.out.println(tipoPetic);
         if (tipoPetic.startsWith("HEAD")){
             opPeticion = 1;
