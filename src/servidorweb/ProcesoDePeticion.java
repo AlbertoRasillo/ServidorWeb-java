@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 public class ProcesoDePeticion extends Thread{
     private Socket socket;
     private int timeout;
-    static  String RUTAPRINC = "C:\\Users\\Axtro\\Desktop\\ServidorWeb-java\\src\\servidorweb\\web\\";
+    static  String RUTAPRINC = "C:\\Users\\Alberto\\Documents\\UNIVERSIDAD\\Ampliacion POO\\ServidorWeb\\src\\servidorweb\\web\\";
     static final private String DOCPRINC = "index.html";
     static private String DOCERROR = "error.html";
     ServidorWeb sw;
@@ -55,48 +55,23 @@ public class ProcesoDePeticion extends Thread{
     }
     private void respuesta() throws IOException{
         salida = new DataOutputStream(socket.getOutputStream());
-        int opPeticion = 0;
         String ruta;
-        int tipoArchivo = 0;
         FileInputStream fichero = null;
         String peticion = null;
+        String opPeticion = null;
+        String recursoSol = null;
+        String tipoArchivo = null;
+        String cabecera="HTTP/1.x ";
         
         try {
             peticion = entrada.readLine();
             entrada.readLine();
         } catch (Exception e) {
         }
-        String tipoPetic = peticion;
-        System.out.println(tipoPetic);
-        if (tipoPetic.startsWith("HEAD")){
-            opPeticion = 1;
-        }
-        if (tipoPetic.startsWith("GET")){
-            opPeticion = 2;
-        }
-        if (opPeticion == 0){
-            try{
-                System.err.println("Se ha detectado un error 501");
-                System.err.println();
-            }catch(Exception ex){
-        }
-        }else{
-            //obtenemos el nombre recurso que solicita el cliente
-            int inicio = 0;
-            int fin = 0;
-            for (int pos=0; pos<peticion.length(); pos++){
-                // Buscamos el ultimo espacio en blanco en la linea
-                if (peticion.charAt(pos)==' ' && inicio!=0){
-                    fin=pos;
-                    break;
-                }
-                // Buscamos el primer espacio en blanco en la linea
-                if (peticion.charAt(pos)==' ' && inicio==0){
-                    inicio=pos;
-                }
-            }
-            String webPeti = peticion.substring(inicio+2, fin);
-            ruta = RUTAPRINC+webPeti;
+        opPeticion = tipoPeticion(peticion);
+        //obtenemos el nombre recurso que solicita el cliente
+        recursoSol = recursoSolicitado(peticion);
+            ruta = RUTAPRINC+recursoSol;
             try {
                 fichero = new FileInputStream(ruta);
             } catch (Exception ex) {
@@ -106,7 +81,8 @@ public class ProcesoDePeticion extends Thread{
                 try {
                     //mostramos el fichero de error 404 - pagina no encontrada
                     fichero = new FileInputStream(RUTAPRINC+DOCERROR);
-                    salida.writeBytes(crearCabecera(404,1));
+                    cabecera=cabecera+"404 No encontrado" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " + "\r\n" + "Content-Type: text/html\r\n" + "\r\n";
+                    salida.writeBytes(cabecera);
                     leerFichero(opPeticion, fichero);
                     return;
                 } catch (Exception ex2) {
@@ -116,26 +92,13 @@ public class ProcesoDePeticion extends Thread{
                 }
                 
             }
-            ruta = ruta.toLowerCase();
-            if (ruta.endsWith(".htm")||ruta.endsWith(".html")){
-                tipoArchivo=1;
-            }
-            if (ruta.endsWith(".txt")){
-                tipoArchivo=2;
-            }
-            if (ruta.endsWith(".gif")){
-                tipoArchivo=3;
-            }
-            if (ruta.endsWith(".jpg")||ruta.endsWith(".jpeg")){
-                tipoArchivo=4;
-            }
-            if (ruta.endsWith(".zip")){
-                tipoArchivo=5;
-            }
+            cabecera=cabecera+"200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " + "\r\n";
+            tipoArchivo = tipoArchivo(ruta);
+            cabecera = cabecera + tipoArchivo +"\r\n";
             
             // Enviamos la cabecera y recurso 
             try{
-                salida.writeBytes(crearCabecera(200,tipoArchivo));
+                salida.writeBytes(cabecera);
                 leerFichero(opPeticion, fichero);
             }catch(Exception ex){
                 // Quizás no ha sido posible enviar la cabecera
@@ -145,11 +108,11 @@ public class ProcesoDePeticion extends Thread{
                 return; // No se debe seguir adelante
             }
             
-        }
+        
     }
-    private void leerFichero(int opPeticion, FileInputStream fichero){
+    private void leerFichero(String opPeticion, FileInputStream fichero){
             // la peticion es GET, el contenido tambien
-            if (opPeticion==2){
+            if (opPeticion=="GET"){
                 try{
                     while(true){
                         int b = fichero.read();
@@ -167,6 +130,72 @@ public class ProcesoDePeticion extends Thread{
                     System.err.println();
                 }
             }
+    }
+    private String tipoPeticion(String peticion){
+        
+        String tipoPetic = peticion;
+        String opPeticion = null;
+        System.out.println(tipoPetic);
+        if (tipoPetic.startsWith("HEAD")){
+            opPeticion = "HEAD";
+        }
+        if (tipoPetic.startsWith("GET")){
+            opPeticion = "GET";
+        }
+        //comprobar que funciona este error
+        if (opPeticion == ""){
+            try{
+                System.err.println("Se ha detectado un error 501");
+                System.err.println();
+            }catch(Exception ex){
+            }
+        }
+        return opPeticion;
+    }
+    
+    private String tipoArchivo(String ruta){
+            ruta = ruta.toLowerCase();
+            String tipoArchivo = null;
+            if (ruta.endsWith(".html")){
+                tipoArchivo="Content-Type: text/html\r\n";
+            }
+            if (ruta.endsWith(".htm")){
+                tipoArchivo="Content-Type: text/html\r\n";
+            }
+            if (ruta.endsWith(".txt")){
+                tipoArchivo="Content-Type: text/plain\r\n";
+            }
+            if (ruta.endsWith(".gif")){
+                tipoArchivo="Content-Type: image/gif\r\n";
+            }
+            if (ruta.endsWith(".jpg")){
+                tipoArchivo="Content-Type: image/jpeg\r\n";
+            }
+            if (ruta.endsWith(".zip")){
+                tipoArchivo="Content-Type: image/jpeg\r\n";
+            }
+            if (ruta.endsWith(".zip")){
+                tipoArchivo="Content-Type: application/zip\r\n";
+            }
+            return tipoArchivo;
+    }
+    
+    private String recursoSolicitado(String peticion){
+            int inicio = 0;
+            int fin = 0;
+            for (int pos=0; pos<peticion.length(); pos++){
+                // Buscamos el ultimo espacio en blanco en la linea
+                if (peticion.charAt(pos)==' ' && inicio!=0){
+                    fin=pos;
+                    break;
+                }
+                // Buscamos el primer espacio en blanco en la linea
+                if (peticion.charAt(pos)==' ' && inicio==0){
+                    inicio=pos;
+                }
+            }
+            String webPeti = peticion.substring(inicio+2, fin);
+            return webPeti;
     }
     
     private String crearCabecera(int codigoRepuesta, int tipoArchivo){
@@ -193,32 +222,32 @@ public class ProcesoDePeticion extends Thread{
         cabecera = cabecera + "\r\n";
         cabecera = cabecera + "Transfer-Encoding: " + "\r\n";
         cabecera = cabecera + "Date: " + "\r\n";
-        switch(tipoArchivo){
-            // El caso -1 no devuelve nada porque lo reservamos para errores
-            case -1:
-                break;
-            // MIME conocidos
-            case 1:
-                cabecera=cabecera+"Content-Type: text/html\r\n";
-                break;
-            case 2:
-                cabecera=cabecera+"Content-Type: text/plain\r\n";
-                break;
-            case 3:
-                cabecera=cabecera+"Content-Type: image/gif\r\n";
-                break;
-            case 4:
-                cabecera=cabecera+"Content-Type: image/jpeg\r\n";
-                break;
-            case 5:
-                cabecera=cabecera+"Content-Type: application/zip\r\n";
-                break;
-            // En casos de formatos desconocidos... (es decir, el caso 0)
-            case 0: default:
-                cabecera=cabecera+"Content-Type: application/octet-stream\r\n";
-                break;
-        }
-        cabecera=cabecera+"\r\n";
+//        switch(tipoArchivo){
+//            // El caso -1 no devuelve nada porque lo reservamos para errores
+//            case -1:
+//                break;
+//            // MIME conocidos
+//            case 1:
+//                cabecera=cabecera+"Content-Type: text/html\r\n";
+//                break;
+//            case 2:
+//                cabecera=cabecera+"Content-Type: text/plain\r\n";
+//                break;
+//            case 3:
+//                cabecera=cabecera+"Content-Type: image/gif\r\n";
+//                break;
+//            case 4:
+//                cabecera=cabecera+"Content-Type: image/jpeg\r\n";
+//                break;
+//            case 5:
+//                cabecera=cabecera+"Content-Type: application/zip\r\n";
+//                break;
+//            // En casos de formatos desconocidos... (es decir, el caso 0)
+//            case 0: default:
+//                cabecera=cabecera+"Content-Type: application/octet-stream\r\n";
+//                break;
+//        }
+        //cabecera=cabecera+"\r\n";
         
         return cabecera;
     }
