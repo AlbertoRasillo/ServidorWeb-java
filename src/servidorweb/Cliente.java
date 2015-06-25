@@ -86,11 +86,11 @@ public class Cliente {
         sb.append(";");
         return sb.toString();   
     }
-    public static void GuardarClientes(ArrayList<Cliente> lista){
+    public static void ArchivarClientes(ArrayList<Cliente> clientes){
         try{
             FileWriter fw = new FileWriter(NOMFICHERO, false); 
             
-            for (Cliente cliente : lista) {
+            for (Cliente cliente : clientes) {
                 fw.write(cliente.object2CSV());
                 fw.write(13);
                 fw.write(10);
@@ -101,5 +101,16 @@ public class Cliente {
             System.out.println(ex.toString());
         }
     }
-   
+        public static boolean ExisteCliente(String coockie, ArrayList<Cliente> clientes){
+        boolean comprobar = false;
+        for(Cliente u1 : clientes){
+            if(u1.coockie.equals(coockie)){
+                comprobar = true;
+            }
+        }
+        return comprobar;
+    }
+//    public static boolean banear(Cliente cli){
+//        
+//    } 
 }
