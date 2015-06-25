@@ -101,27 +101,40 @@ public class ProcesoDePeticion extends Thread{
                 }
                 
             }
+            
             if (cabeceraPeticion != null){
-                cabecera=cabecera+"200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Set-Cookie:444" + "\r\n" + "Date: " + "\r\n";
-                tipoArchivo = tipoArchivo(ruta);
-                cabecera = cabecera + tipoArchivo +"\r\n";
-
-                // Enviamos la cabecera y recurso 
-                try{
-                    salida.writeBytes(cabecera);
-                    enviarFichero(opPeticion, fichero);
-                }catch(Exception ex){
-                    // Quizás no ha sido posible enviar la cabecera
-                    System.err.println("Error: "+ex.getMessage());
-                    System.err.println("No se pudo enviar la cabecera de la respuesta correctamente");
-                    System.err.println();
-                    return; // No se debe seguir adelante
+                if(buscarCookie(cabeceraPeticion)== null||
+                        Cliente.ExisteCliente(buscarCookie(cabeceraPeticion), Cliente.getClientes())){
+                        Cliente client = new Cliente();
+                        client.getCoockie();
+                        cabecera=cabecera+"200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" + 
+                                "Set-Cookie: " + client.getCoockie() + "\r\n" + "Date:" + "\r\n";
+                        tipoArchivo = tipoArchivo(ruta);
+                        cabecera = cabecera + tipoArchivo +"\r\n";
                 }
+                else if(Cliente.ExisteCliente(buscarCookie(cabeceraPeticion), Cliente.getClientesBaneados())){
+                    //
+                }
+                else{
+                        cabecera=cabecera+"200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " + "\r\n";
+                        tipoArchivo = tipoArchivo(ruta);
+                        cabecera = cabecera + tipoArchivo +"\r\n";
+                }
+                 // Enviamos la cabecera y recurso 
+                    try{
+                        salida.writeBytes(cabecera);
+                        enviarFichero(opPeticion, fichero);
+                    }catch(Exception ex){
+                        // Quizás no ha sido posible enviar la cabecera
+                        System.err.println("Error: "+ex.getMessage());
+                        System.err.println("No se pudo enviar la cabecera de la respuesta correctamente");
+                        System.err.println();
+                        return; // No se debe seguir adelante
+                    }
             }
             
         
     }
-    // Modularizar el codigo un leer fichro esta mandando el fichero tmb!! Cambia el nombre o haz otro metodo para enviar!
     private void enviarFichero(String opPeticion, FileInputStream fichero){
             // la peticion es GET, el contenido tambien
             if (opPeticion=="GET"){
