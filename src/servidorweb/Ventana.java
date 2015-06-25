@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 
 public class Ventana extends javax.swing.JFrame {
 
-   ServidorWeb sw;
+   ServidorWeb sw=null;
     public Ventana() {
         initComponents();
     }
@@ -52,6 +52,11 @@ public class Ventana extends javax.swing.JFrame {
         of.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 ofMouseClicked(evt);
+            }
+        });
+        of.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                ofActionPerformed(evt);
             }
         });
 
@@ -134,20 +139,28 @@ public class Ventana extends javax.swing.JFrame {
     }//GEN-LAST:event_onActionPerformed
 
     private void ofMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ofMouseClicked
-        try {
-            this.sw.pararServidor(sw);
-        } catch (Exception e) {
-        }
+       
+        sw.suspend();
+        
     }//GEN-LAST:event_ofMouseClicked
 
     private void onMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onMouseClicked
-           try {
-           this.sw = new ServidorWeb();
-           System.out.println("server arrancado");
-       } catch (IOException ex) {
-           Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);          
-       }
+        if (sw == null){
+            try {
+                this.sw = new ServidorWeb();
+                System.out.println("server arrancado");
+            } catch (IOException ex) {
+                Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);          
+            }
+        }
+        else{
+            sw.resume();
+        }
     }//GEN-LAST:event_onMouseClicked
+
+    private void ofActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ofActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_ofActionPerformed
 
     /**
      * @param args the command line arguments

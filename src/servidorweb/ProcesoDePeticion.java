@@ -15,24 +15,31 @@ public class ProcesoDePeticion extends Thread{
     private Socket socket;
     private int timeout;
     //ruta relativa desde src/servidorweb/web/
-    static  String RUTAPRINC = "src/servidorweb/web/";
+    static  String RUTAPRINC = "web\\";
     static final private String DOCPRINC = "index.html";
     static private String DOCERROR = "error.html";
     ServidorWeb sw;
     BufferedReader entrada;
     DataOutputStream salida;
+     ArrayList<String> cabeceraPeticion = new ArrayList<String>();
     
     public ProcesoDePeticion(Socket sock, ServidorWeb sw) throws IOException{
         socket = sock;
         this.sw = sw;
         entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        this.start();
     }
     
     @Override
     public void run(){
-            
         try {
-            respuesta();
+            cabeceraPeticion= leerCabeceraPeticion(entrada);
+             
+        } catch (IOException ex) {
+            Logger.getLogger(ProcesoDePeticion.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            respuesta(cabeceraPeticion.get(0));
         } catch (IOException ex) {
             Logger.getLogger(ProcesoDePeticion.class.getName()).log(Level.SEVERE, null, ex); 
         }
@@ -51,27 +58,27 @@ public class ProcesoDePeticion extends Thread{
         } catch (IOException ex) {
             Logger.getLogger(ProcesoDePeticion.class.getName()).log(Level.SEVERE, null, ex);
         }
-            sw.contadorPeticiones--;
-            System.out.println(sw.contadorPeticiones);
+         
     }
-    private void respuesta() throws IOException{
+    private void respuesta(String cabeceraNueva) throws IOException{
         salida = new DataOutputStream(socket.getOutputStream());
-        String ruta;
+        String ruta = null;
         FileInputStream fichero = null;
-        String peticion = null;
+        //String cabeceraNueva = null;
         String opPeticion = null;
         String recursoSol = null;
         String tipoArchivo = null;
         String cabecera="HTTP/1.x ";
         
         try {
-            peticion = entrada.readLine();
+            //cabeceraNueva = entrada.readLine();
+            //System.out.println(peticion);
             entrada.readLine();
         } catch (Exception e) {
         }
-        opPeticion = tipoPeticion(peticion);
+        opPeticion = tipoPeticion(cabeceraNueva);
         //obtenemos el nombre recurso que solicita el cliente
-        recursoSol = recursoSolicitado(peticion);
+        recursoSol = recursoSolicitado(cabeceraNueva);
             ruta = RUTAPRINC+recursoSol;
             try {
                 fichero = new FileInputStream(ruta);
@@ -83,8 +90,9 @@ public class ProcesoDePeticion extends Thread{
                     //mostramos el fichero de error 404 - pagina no encontrada
                     fichero = new FileInputStream(RUTAPRINC+DOCERROR);
                     cabecera=cabecera+"404 No encontrado" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " + "\r\n" + "Content-Type: text/html\r\n" + "\r\n";
+                    System.out.println(cabecera);
                     salida.writeBytes(cabecera);
-                    leerFichero(opPeticion, fichero);
+                    enviarFichero(opPeticion, fichero);
                     return;
                 } catch (Exception ex2) {
                         System.err.println("Error: "+ex2.getMessage());
@@ -93,25 +101,28 @@ public class ProcesoDePeticion extends Thread{
                 }
                 
             }
-            cabecera=cabecera+"200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " + "\r\n";
-            tipoArchivo = tipoArchivo(ruta);
-            cabecera = cabecera + tipoArchivo +"\r\n";
-            
-            // Enviamos la cabecera y recurso 
-            try{
-                salida.writeBytes(cabecera);
-                leerFichero(opPeticion, fichero);
-            }catch(Exception ex){
-                // Quizás no ha sido posible enviar la cabecera
-                System.err.println("Error: "+ex.getMessage());
-                System.err.println("No se pudo enviar la cabecera de la respuesta correctamente");
-                System.err.println();
-                return; // No se debe seguir adelante
+            if (cabeceraPeticion != null){
+                cabecera=cabecera+"200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Set-Cookie:444" + "\r\n" + "Date: " + "\r\n";
+                tipoArchivo = tipoArchivo(ruta);
+                cabecera = cabecera + tipoArchivo +"\r\n";
+
+                // Enviamos la cabecera y recurso 
+                try{
+                    salida.writeBytes(cabecera);
+                    enviarFichero(opPeticion, fichero);
+                }catch(Exception ex){
+                    // Quizás no ha sido posible enviar la cabecera
+                    System.err.println("Error: "+ex.getMessage());
+                    System.err.println("No se pudo enviar la cabecera de la respuesta correctamente");
+                    System.err.println();
+                    return; // No se debe seguir adelante
+                }
             }
             
         
     }
-    private void leerFichero(String opPeticion, FileInputStream fichero){
+    // Modularizar el codigo un leer fichro esta mandando el fichero tmb!! Cambia el nombre o haz otro metodo para enviar!
+    private void enviarFichero(String opPeticion, FileInputStream fichero){
             // la peticion es GET, el contenido tambien
             if (opPeticion=="GET"){
                 try{
@@ -184,6 +195,7 @@ public class ProcesoDePeticion extends Thread{
     private String recursoSolicitado(String peticion){
             int inicio = 0;
             int fin = 0;
+            String webPeti = null;
             for (int pos=0; pos<peticion.length(); pos++){
                 // Buscamos el ultimo espacio en blanco en la linea
                 if (peticion.charAt(pos)==' ' && inicio!=0){
@@ -195,9 +207,31 @@ public class ProcesoDePeticion extends Thread{
                     inicio=pos;
                 }
             }
-            String webPeti = peticion.substring(inicio+2, fin);
+            webPeti = peticion.substring(inicio+2, fin);
+            System.out.println(webPeti);
             return webPeti;
     }
+
+    public ArrayList<String> leerCabeceraPeticion(BufferedReader entrada) throws IOException{
+        ArrayList<String> cabeceraPeticion = new ArrayList<String>();
+        String linea;
+        for (int i=0; i<=7; i++){
+            linea = entrada.readLine();
+            System.out.println(linea);
+            cabeceraPeticion.add(linea);
+        }
+        return cabeceraPeticion;
+        
+    }
+    public String buscarCookie(ArrayList<String> cabeceraPeticion){
+        for(String linea: cabeceraPeticion){
+            if(linea.startsWith("Cookie:")){
+                return linea;
+            }
+        }
+        return null;
+    }
+    
     
     private String crearCabecera(int codigoRepuesta, int tipoArchivo){
         String cabecera="HTTP/1.x ";

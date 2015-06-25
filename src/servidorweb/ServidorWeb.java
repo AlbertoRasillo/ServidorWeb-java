@@ -8,6 +8,8 @@ package servidorweb;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,23 +32,22 @@ public class ServidorWeb extends Thread {
     
     
     public void run(){
-        while (!this.isInterrupted()){
-            if(this.contadorPeticiones<NºClientes){
+        while (true){
+            ExecutorService exec = Executors.newFixedThreadPool(5);
+//            if(this.contadorPeticiones<NºClientes){
+                
                 try {
                     Socket socketClien = socketServidor.accept();
                     this.contadorPeticiones++;
                     System.out.println(this.contadorPeticiones);
-                    ProcesoDePeticion hilo = new ProcesoDePeticion(socketClien,this);
+                    //exec.execute (new ProcesoDePeticion(socketClien,this));
+                    ProcesoDePeticion procesoDePeticion = new ProcesoDePeticion(socketClien,this);
                     System.out.println("hilo servidor web");
-                    hilo.start();
+                    
                 } catch (IOException ex) {
                     Logger.getLogger(ServidorWeb.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }
-            if (Thread.currentThread().isInterrupted()) {
-                    // cleanup and stop execution
-                    // for example a break in a loop
-            }
+            //}
         }    
     }
     
