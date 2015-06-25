@@ -30,7 +30,7 @@ public class ServidorWeb extends Thread {
     
     
     public void run(){
-        while (true){
+        while (!this.isInterrupted()){
             if(this.contadorPeticiones<NºClientes){
                 try {
                     Socket socketClien = socketServidor.accept();
@@ -42,6 +42,10 @@ public class ServidorWeb extends Thread {
                 } catch (IOException ex) {
                     Logger.getLogger(ServidorWeb.class.getName()).log(Level.SEVERE, null, ex);
                 }
+            }
+            if (Thread.currentThread().isInterrupted()) {
+                    // cleanup and stop execution
+                    // for example a break in a loop
             }
         }    
     }
@@ -65,7 +69,10 @@ public class ServidorWeb extends Thread {
     public void setNºClientes(int NºClientes) {
         this.NºClientes = NºClientes;
     }
-
+    public void pararServidor(ServidorWeb sw){
+        //interrupt o stop???
+        sw.interrupt();
+    }
   
 }
     

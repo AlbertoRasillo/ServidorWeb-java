@@ -134,7 +134,10 @@ public class Ventana extends javax.swing.JFrame {
     }//GEN-LAST:event_onActionPerformed
 
     private void ofMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ofMouseClicked
-
+        try {
+            this.sw.pararServidor(sw);
+        } catch (Exception e) {
+        }
     }//GEN-LAST:event_ofMouseClicked
 
     private void onMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_onMouseClicked

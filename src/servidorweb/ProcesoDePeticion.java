@@ -14,7 +14,8 @@ import java.util.logging.Logger;
 public class ProcesoDePeticion extends Thread{
     private Socket socket;
     private int timeout;
-    static  String RUTAPRINC = "C:\\Users\\Alberto\\Documents\\UNIVERSIDAD\\Ampliacion POO\\ServidorWeb\\src\\servidorweb\\web\\";
+    //ruta relativa desde src/servidorweb/web/
+    static  String RUTAPRINC = "src/servidorweb/web/";
     static final private String DOCPRINC = "index.html";
     static private String DOCERROR = "error.html";
     ServidorWeb sw;
