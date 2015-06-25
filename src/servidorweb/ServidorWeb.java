@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 public class ServidorWeb extends Thread {
     private final int PUERTO=9999;
     private String estado;
-    private int NºClientes = 1;
+    private int NºClientes = 10;
     ServerSocket socketServidor;
     int contadorPeticiones;
     
