@@ -22,33 +22,37 @@ public class ServidorWeb extends Thread {
     private String estado;
     private int NºClientes = 10;
     ServerSocket socketServidor;
-    int contadorPeticiones;
+    private ExecutorService exec;
+
     
     public ServidorWeb() throws IOException{
        socketServidor= new ServerSocket(PUERTO);
-       this.contadorPeticiones = 0;
        this.start();
     };
     
     
     public void run(){
-        while (true){
-            ExecutorService exec = Executors.newFixedThreadPool(5);
-//            if(this.contadorPeticiones<NºClientes){
-                
-                try {
-                    Socket socketClien = socketServidor.accept();
-                    this.contadorPeticiones++;
-                    System.out.println(this.contadorPeticiones);
-                    //exec.execute (new ProcesoDePeticion(socketClien,this));
-                    ProcesoDePeticion procesoDePeticion = new ProcesoDePeticion(socketClien,this);
-                    System.out.println("hilo servidor web");
-                    
-                } catch (IOException ex) {
-                    Logger.getLogger(ServidorWeb.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            //}
-        }    
+        exec = Executors.newFixedThreadPool(1);
+        try {
+            while (true){
+    //            if(this.contadorPeticiones<NºClientes){
+
+                    try {
+                        Socket socketClien = socketServidor.accept();
+                        System.out.println(socketClien.getInetAddress().toString());
+                        exec.execute (new ProcesoDePeticion(socketClien));
+                        // ProcesoDePeticion procesoDePeticion = new ProcesoDePeticion(socketClien);
+                        System.out.println("hilo servidor web");
+
+                    } catch (IOException ex) {
+                        Logger.getLogger(ServidorWeb.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                //}
+            } 
+        }
+        finally {
+            exec.shutdown();
+        }
     }
     
     public int getPUERTO() {

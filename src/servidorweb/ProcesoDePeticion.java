@@ -11,23 +11,22 @@ import java.util.logging.Logger;
  *
  * @author Alberto
  */
-public class ProcesoDePeticion extends Thread{
+public class ProcesoDePeticion implements Runnable { // extends Thread{
     private Socket socket;
     private int timeout;
     //ruta relativa desde src/servidorweb/web/
     static  String RUTAPRINC = "web\\";
     static final private String DOCPRINC = "index.html";
     static private String DOCERROR = "error.html";
-    ServidorWeb sw;
+
     BufferedReader entrada;
     DataOutputStream salida;
      ArrayList<String> cabeceraPeticion = new ArrayList<String>();
     
-    public ProcesoDePeticion(Socket sock, ServidorWeb sw) throws IOException{
+    public ProcesoDePeticion(Socket sock) throws IOException{
         socket = sock;
-        this.sw = sw;
         entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        this.start();
+        // this.start();
     }
     
     @Override
@@ -70,12 +69,6 @@ public class ProcesoDePeticion extends Thread{
         String tipoArchivo = null;
         String cabecera="HTTP/1.x ";
         
-        try {
-            //cabeceraNueva = entrada.readLine();
-            //System.out.println(peticion);
-            entrada.readLine();
-        } catch (Exception e) {
-        }
         opPeticion = tipoPeticion(cabeceraNueva);
         //obtenemos el nombre recurso que solicita el cliente
         recursoSol = recursoSolicitado(cabeceraNueva);
@@ -124,7 +117,7 @@ public class ProcesoDePeticion extends Thread{
                     try{
                         salida.writeBytes(cabecera);
                         enviarFichero(opPeticion, fichero);
-                    }catch(Exception ex){
+                    }catch(IOException ex){
                         // Quizás no ha sido posible enviar la cabecera
                         System.err.println("Error: "+ex.getMessage());
                         System.err.println("No se pudo enviar la cabecera de la respuesta correctamente");
@@ -161,6 +154,7 @@ public class ProcesoDePeticion extends Thread{
         String tipoPetic = peticion;
         String opPeticion = null;
         System.out.println(tipoPetic);
+        //falla mirar para coger head de otra manera
         if (tipoPetic.startsWith("HEAD")){
             opPeticion = "HEAD";
         }
