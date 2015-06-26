@@ -184,13 +184,7 @@ public class Cliente {
         c1.add(Calendar.DATE, 7);
         return c1.getTime().toLocaleString();
     }
-    
-    
-    public static void ComprobarFechas(ArrayList<Cliente> clientes){
-        for(Cliente cli: clientes){   
-        }
-    }
-    
+ 
     
     public static Calendar stringToCalendar(String fecha) throws ParseException{
         DateFormat df =  new  SimpleDateFormat ( FORMATOFECHA ); 
@@ -206,6 +200,7 @@ public class Cliente {
             Calendar c2 = stringToCalendar(cli.fechaExpiracion);
             if (c1.compareTo(c2) < 0){
                 clientes.remove(cli);
+                clientesBaneados.remove(cli);
             }
         }
     }
