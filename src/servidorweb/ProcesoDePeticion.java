@@ -15,7 +15,7 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
     private Socket socket;
     private int timeout;
     //ruta relativa desde src/servidorweb/web/
-    static  String RUTAPRINC = "web\\";
+    static  String RUTAPRINC = "web/";
     static final private String DOCPRINC = "index.html";
     static private String DOCERROR = "error.html";
 
@@ -83,7 +83,6 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
                     //mostramos el fichero de error 404 - pagina no encontrada
                     fichero = new FileInputStream(RUTAPRINC+DOCERROR);
                     cabecera=cabecera+"404 No encontrado" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " + "\r\n" + "Content-Type: text/html\r\n" + "\r\n";
-                    System.out.println(cabecera);
                     salida.writeBytes(cabecera);
                     enviarFichero(opPeticion, fichero);
                     return;
@@ -162,8 +161,9 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
             opPeticion = "GET";
         }
         //comprobar que funciona este error
-        if (opPeticion == ""){
+        if (opPeticion == null){
             try{
+                opPeticion = "";
                 System.err.println("Se ha detectado un error 501");
                 System.err.println();
             }catch(Exception ex){
@@ -222,11 +222,11 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
     public ArrayList<String> leerCabeceraPeticion(BufferedReader entrada) throws IOException{
         ArrayList<String> cabeceraPeticion = new ArrayList<String>();
         String linea;
-        for (int i=0; i<=7; i++){
-            linea = entrada.readLine();
-            System.out.println(linea);
-            cabeceraPeticion.add(linea);
-        }
+            for (int i=0; i<=7; i++){
+                linea = entrada.readLine();
+                System.out.println(linea);
+                cabeceraPeticion.add(linea);
+            }
         return cabeceraPeticion;
         
     }
