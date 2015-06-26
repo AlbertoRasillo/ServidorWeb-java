@@ -13,8 +13,8 @@ import java.util.logging.Logger;
  *
  * @author Axtro
  */
-public class Demonio implements Runnable{
-    public Demonio(){
+public class TareasSegundoPlano implements Runnable{
+    public TareasSegundoPlano(){
         Thread t = new Thread(this);
         t.start();
         
@@ -25,16 +25,17 @@ public class Demonio implements Runnable{
     public void run(){
         while (true){
             try {
+                Thread.sleep(60*60*1000); //1 hora
+            } catch (InterruptedException ex) {
+                Logger.getLogger(TareasSegundoPlano.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            try {
                 Cliente.elimianrExpirados(Cliente.getClientes());
             } catch (ParseException ex) {
-                Logger.getLogger(Demonio.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(TareasSegundoPlano.class.getName()).log(Level.SEVERE, null, ex);
             }
             Cliente.ArchivarClientes(Cliente.getClientes());
-            try {
-                Thread.sleep(10*60*1000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(Demonio.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            
         } 
     }
 }
