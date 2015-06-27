@@ -21,7 +21,7 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
 
     BufferedReader entrada;
     DataOutputStream salida;
-     ArrayList<String> cabeceraPeticion = new ArrayList<String>();
+    ArrayList<String> cabeceraPeticion = new ArrayList<String>();
     
     public ProcesoDePeticion(Socket sock) throws IOException{
         socket = sock;

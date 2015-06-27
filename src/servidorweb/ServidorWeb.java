@@ -5,9 +5,11 @@
  */
 package servidorweb;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
@@ -23,6 +25,7 @@ public class ServidorWeb extends Thread {
     private int NUMCLIENTES = 1;
     ServerSocket socketServidor;
     private ExecutorService exec;
+    private static ArrayList<String> tiposMime = new ArrayList<String>();
 
     
     public ServidorWeb() throws IOException{
@@ -77,6 +80,21 @@ public class ServidorWeb extends Thread {
     public void pararServidor(ServidorWeb sw){
         //interrupt o stop???
         sw.interrupt();
+    }
+    public static void tiposMime(ArrayList<Cliente> clientes){
+        try{
+            FileWriter fw = new FileWriter(NOMFICHERO, false); 
+            
+            for (Cliente cliente : clientes) {
+                fw.write(cliente.cliente2CSV());
+                fw.write(13);
+                fw.write(10);
+                //--->
+            }
+            fw.close();    
+        }catch(Exception ex){
+            System.out.println(ex.toString());
+        }
     }
   
 }
