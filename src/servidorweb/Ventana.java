@@ -241,7 +241,7 @@ public class Ventana extends javax.swing.JFrame {
         String tipoMIME =TextMIME.getText();
         TextMIME.setText("");
         System.out.println(tipoMIME);
-        
+        ServidorWeb.
     }//GEN-LAST:event_ButtonMIMEMouseClicked
 
     private void actualizarTextArea(final String texto) {
