@@ -13,10 +13,9 @@ import java.util.logging.Logger;
  *
  * @author Axtro
  */
-public class TareasSegundoPlano implements Runnable{
+public class TareasSegundoPlano extends Thread{
     public TareasSegundoPlano(){
-        Thread t = new Thread(this);
-        t.start();
+        this.start();
         
     }
     

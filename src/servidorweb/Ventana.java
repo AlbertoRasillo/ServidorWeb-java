@@ -4,13 +4,17 @@ package servidorweb;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
+import javax.swing.text.BadLocationException;
 
 public class Ventana extends javax.swing.JFrame {
 
    ServidorWeb sw=null;
+   TareasSegundoPlano Tarea= null;
     public Ventana() {
         initComponents();
         redireccionarSystemStreams();
@@ -27,9 +31,13 @@ public class Ventana extends javax.swing.JFrame {
         of = new javax.swing.JRadioButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
-        jTextField1 = new javax.swing.JTextField();
+        TextRespuestas = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
+        EnviarRespuestas = new javax.swing.JButton();
+        jLabel4 = new javax.swing.JLabel();
+        TextMIME = new javax.swing.JTextField();
+        ButtonMIME = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -92,43 +100,84 @@ public class Ventana extends javax.swing.JFrame {
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
 
-        jTextField1.setText("Manguta");
-
-        jLabel2.setText("Nº Clientes:");
+        jLabel2.setText("Nº de respuestas:");
 
         jLabel3.setText("Log:");
+
+        EnviarRespuestas.setText("Aceptar");
+        EnviarRespuestas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                EnviarRespuestasMouseClicked(evt);
+            }
+        });
+        EnviarRespuestas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                EnviarRespuestasActionPerformed(evt);
+            }
+        });
+
+        jLabel4.setText("tipo MIME:");
+
+        ButtonMIME.setText("Aceptar");
+        ButtonMIME.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ButtonMIMEMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(26, 26, 26)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 459, Short.MAX_VALUE)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 81, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31))
-            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jScrollPane1))
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel3)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(26, 26, 26)
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 404, Short.MAX_VALUE)
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(TextRespuestas, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jLabel4)
+                                .addGap(29, 29, 29)
+                                .addComponent(TextMIME, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(EnviarRespuestas)
+                            .addComponent(ButtonMIME, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel3)
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(27, 27, 27)
+                .addGap(26, 26, 26)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel2))
-                    .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 221, Short.MAX_VALUE)
-                .addComponent(jLabel3)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel3))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(TextRespuestas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2)
+                            .addComponent(EnviarRespuestas))
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(TextMIME, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(ButtonMIME))
+                        .addGap(0, 215, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -142,7 +191,13 @@ public class Ventana extends javax.swing.JFrame {
     }//GEN-LAST:event_onActionPerformed
 
     private void ofMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ofMouseClicked
-       
+        Cliente.ArchivarClientes(Cliente.getClientes());
+        Tarea.suspend();
+       try {
+           Tarea.join();
+       } catch (InterruptedException ex) {
+           Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
+       }
         sw.suspend();
         System.out.println("server apagado");
         
@@ -152,6 +207,7 @@ public class Ventana extends javax.swing.JFrame {
         if (sw == null){
             try {
                 this.sw = new ServidorWeb();
+                this.Tarea= new TareasSegundoPlano();
                 System.out.println("server arrancado");
             } catch (IOException ex) {
                 Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);          
@@ -159,6 +215,7 @@ public class Ventana extends javax.swing.JFrame {
         }
         else{
             sw.resume();
+            Tarea.resume();
             System.out.println("server arrancado");
         }
     }//GEN-LAST:event_onMouseClicked
@@ -166,6 +223,26 @@ public class Ventana extends javax.swing.JFrame {
     private void ofActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ofActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_ofActionPerformed
+
+    private void EnviarRespuestasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EnviarRespuestasActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_EnviarRespuestasActionPerformed
+
+    private void EnviarRespuestasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_EnviarRespuestasMouseClicked
+        int peticionesActivas = 0;
+        peticionesActivas =Integer.parseInt(TextRespuestas.getText());
+        TextRespuestas.setText("");
+        System.out.println(peticionesActivas);
+        sw.setComparador(peticionesActivas);
+       
+    }//GEN-LAST:event_EnviarRespuestasMouseClicked
+
+    private void ButtonMIMEMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ButtonMIMEMouseClicked
+        String tipoMIME =TextMIME.getText();
+        TextMIME.setText("");
+        System.out.println(tipoMIME);
+        
+    }//GEN-LAST:event_ButtonMIMEMouseClicked
 
     private void actualizarTextArea(final String texto) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -204,14 +281,18 @@ public class Ventana extends javax.swing.JFrame {
    
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton ButtonMIME;
+    private javax.swing.JButton EnviarRespuestas;
     private javax.swing.ButtonGroup Estado;
+    private javax.swing.JTextField TextMIME;
+    private javax.swing.JTextField TextRespuestas;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     public javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JRadioButton of;
     private javax.swing.JRadioButton on;
     // End of variables declaration//GEN-END:variables
