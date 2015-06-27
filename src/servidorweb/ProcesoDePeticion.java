@@ -82,7 +82,8 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
                 try {
                     //mostramos el fichero de error 404 - pagina no encontrada
                     fichero = new FileInputStream(RUTAPRINC+DOCERROR);
-                    cabecera=cabecera+"404 No encontrado" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " + "\r\n" + "Content-Type: text/html\r\n" + "\r\n";
+                    cabecera=cabecera+"404 No encontrado" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " 
+                            + "\r\n" + "Content-Type: text/html\r\n" + "\r\n";
                     salida.writeBytes(cabecera);
                     enviarFichero(opPeticion, fichero);
                     return;
@@ -161,7 +162,7 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
             opPeticion = "GET";
         }
         //comprobar que funciona este error
-        if (opPeticion == null){
+        if (tipoPetic == null){
             try{
                 opPeticion = "";
                 System.err.println("Se ha detectado un error 501");

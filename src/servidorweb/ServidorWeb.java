@@ -20,7 +20,7 @@ import java.util.logging.Logger;
 public class ServidorWeb extends Thread {
     private final int PUERTO=9999;
     private String estado;
-    private int NºClientes = 10;
+    private int NUMCLIENTES = 1;
     ServerSocket socketServidor;
     private ExecutorService exec;
 
@@ -32,7 +32,7 @@ public class ServidorWeb extends Thread {
     
     
     public void run(){
-        exec = Executors.newFixedThreadPool(1);
+        exec = Executors.newFixedThreadPool(NUMCLIENTES);
         try {
             while (true){
     //            if(this.contadorPeticiones<NºClientes){
@@ -63,16 +63,16 @@ public class ServidorWeb extends Thread {
         return estado;
     }
 
-    public int getNºClientes() {
-        return NºClientes;
+    public int getNUMCLIENTES() {
+        return NUMCLIENTES;
     }
 
     public void setEstado(String estado) {
         this.estado = estado;
     }
 
-    public void setNºClientes(int NºClientes) {
-        this.NºClientes = NºClientes;
+    public void setNUMCLIENTES(int NUMCLIENTES) {
+        this.NUMCLIENTES = NUMCLIENTES;
     }
     public void pararServidor(ServidorWeb sw){
         //interrupt o stop???
