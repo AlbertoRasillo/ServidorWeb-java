@@ -26,6 +26,7 @@ public class ServidorWeb extends Thread {
     ServerSocket socketServidor;
     private ExecutorService exec;
     private static ArrayList<String> tiposMime = new ArrayList<String>();
+    private static final String NOMFICHERO = "tiposmime";
 
     
     public ServidorWeb() throws IOException{
@@ -81,12 +82,17 @@ public class ServidorWeb extends Thread {
         //interrupt o stop???
         sw.interrupt();
     }
-    public static void tiposMime(ArrayList<Cliente> clientes){
+
+    public static void setTiposMime(ArrayList<String> tiposMime) {
+        ServidorWeb.tiposMime = tiposMime;
+    }
+
+    public static void tiposMime(ArrayList<String> mimes){
         try{
             FileWriter fw = new FileWriter(NOMFICHERO, false); 
             
-            for (Cliente cliente : clientes) {
-                fw.write(cliente.cliente2CSV());
+            for (String mime : mimes) {
+                fw.write(mime);
                 fw.write(13);
                 fw.write(10);
                 //--->
