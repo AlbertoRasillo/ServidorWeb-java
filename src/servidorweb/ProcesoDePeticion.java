@@ -71,6 +71,8 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
         String opPeticion = null;
         String recursoSol = null;
         String tipoArchivo = null;
+        String paginaPrincipal = null;
+        String docError = null;
         String cabecera="HTTP/1.x ";
         String cabeceraIndex="200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " 
                             + "\r\n" + "Content-Type: text/html\r\n" + "\r\n";
@@ -78,6 +80,24 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
         opPeticion = tipoPeticion(cabeceraNueva);
         //obtenemos el nombre recurso que solicita el cliente
         recursoSol = recursoSolicitado(cabeceraNueva);
+        String [] rutaVirt = recursoToArray(recursoSol);
+        for(DirectorioVirtual dv: DirectorioVirtual.Directorios ){
+            if(dv.getNombre() == rutaVirt[0]){
+                paginaPrincipal = dv.getDocumentoPrincipal();
+                docError = dv.getPáginaError();
+            }
+        }
+        if(esIndex(recursoSol)== true){
+            try {
+                fichero = new FileInputStream(RUTAPRINC+paginaPrincipal);
+                salida.writeBytes(cabeceraIndex);
+                enviarFichero(opPeticion, fichero);
+            } catch (Exception e) {
+                System.err.println("No se pudo enviar pagina index");
+                System.err.println();
+            }
+        }else{
+        
             ruta = RUTAPRINC+recursoSol;
             
             try {
@@ -88,7 +108,7 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
                 System.err.println();
                 try {
                     //mostramos el fichero de error 404 - pagina no encontrada
-                    fichero = new FileInputStream(RUTAPRINC+DOCERROR);
+                    fichero = new FileInputStream(RUTAPRINC+docError);
                     cabecera=cabecera+"404 No encontrado" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " 
                             + "\r\n" + "Content-Type: text/html\r\n" + "\r\n";
                     salida.writeBytes(cabecera);
@@ -132,7 +152,7 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
                         return; // No se debe seguir adelante
                     }
             }
-            
+        }    
         
     }
     public void enviarFichero(String opPeticion, FileInputStream fichero){

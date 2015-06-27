@@ -15,7 +15,7 @@ public class DirectorioVirtual {
     private String nombre;
     private String documentoPrincipal;
     private String páginaError;
-    private ArrayList<DirectorioVirtual> Directorios = new ArrayList<DirectorioVirtual>();
+    public static ArrayList<DirectorioVirtual> Directorios = new ArrayList<DirectorioVirtual>();
 
     public String getNombre() {
         return nombre;
