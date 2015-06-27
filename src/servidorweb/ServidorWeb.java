@@ -20,23 +20,31 @@ import java.util.logging.Logger;
 public class ServidorWeb extends Thread {
     private final int PUERTO=9999;
     private String estado;
-    private int NUMCLIENTES = 1;
+    private int NUMCLIENTES = 50;
+    private int Comparador;
     ServerSocket socketServidor;
-    private ExecutorService exec;
+    private ExecutorService exec=Executors.newFixedThreadPool(NUMCLIENTES);
 
     
     public ServidorWeb() throws IOException{
        socketServidor= new ServerSocket(PUERTO);
        this.start();
     };
+
+    public ExecutorService getExec() {
+        return exec;
+    }
     
     
     public void run(){
-        exec = Executors.newFixedThreadPool(NUMCLIENTES);
+        //exec = Executors.newFixedThreadPool(NUMCLIENTES);
         try {
             while (true){
     //            if(this.contadorPeticiones<NºClientes){
-
+                    if (NUMCLIENTES!=Comparador){
+                        exec=Executors.newFixedThreadPool(Comparador);
+                        NUMCLIENTES=Comparador;
+                    }
                     try {
                         Socket socketClien = socketServidor.accept();
                         System.out.println(socketClien.getInetAddress().toString());
@@ -53,6 +61,10 @@ public class ServidorWeb extends Thread {
         finally {
             exec.shutdown();
         }
+    }
+
+    public void setComparador(int Comparador) {
+        this.Comparador = Comparador;
     }
     
     public int getPUERTO() {
