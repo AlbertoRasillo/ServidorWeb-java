@@ -43,11 +43,10 @@ public class Main {
 //                new NewJFrame().setVisible(true);
 //            }
 //        });
-         
-   
-     
+
         Ventana JF= new Ventana();
         JF.setVisible(true);
-
+        TipoMIME.cargarClientes();
+        Cliente.cargarClientes();
     }
 }

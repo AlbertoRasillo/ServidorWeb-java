@@ -39,7 +39,7 @@ public class Ventana extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         TextMIME = new javax.swing.JTextField();
         ButtonMIME = new javax.swing.JButton();
-        jTextField1 = new javax.swing.JTextField();
+        TextContent = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -146,21 +146,18 @@ public class Ventana extends javax.swing.JFrame {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(26, 26, 26)
-                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jLabel4)
-                                .addGap(44, 44, 44)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 404, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 404, Short.MAX_VALUE)
                                 .addComponent(jLabel2)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(TextRespuestas, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(TextMIME, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(31, 31, 31)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(531, 531, 531)
+                                .addComponent(jLabel4)
+                                .addGap(18, 18, 18)
+                                .addComponent(TextMIME)
+                                .addGap(18, 18, 18)
+                                .addComponent(TextContent, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(18, 18, 18)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(EnviarRespuestas)
@@ -190,7 +187,7 @@ public class Ventana extends javax.swing.JFrame {
                             .addComponent(jLabel4)
                             .addComponent(TextMIME, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(ButtonMIME)
-                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(TextContent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(0, 215, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -243,19 +240,25 @@ public class Ventana extends javax.swing.JFrame {
     }//GEN-LAST:event_EnviarRespuestasActionPerformed
 
     private void EnviarRespuestasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_EnviarRespuestasMouseClicked
-        int peticionesActivas = 0;
-        peticionesActivas =Integer.parseInt(TextRespuestas.getText());
-        TextRespuestas.setText("");
-        ExecutorService exec= sw.getExec();
-        exec = Executors.newFixedThreadPool(peticionesActivas);
-       
+        try{
+            int peticionesActivas = 0;
+            peticionesActivas =Integer.parseInt(TextRespuestas.getText());
+            TextRespuestas.setText("");
+            ExecutorService exec= sw.getExec();
+            exec = Executors.newFixedThreadPool(peticionesActivas);
+        }catch(NumberFormatException e){}
     }//GEN-LAST:event_EnviarRespuestasMouseClicked
 
     private void ButtonMIMEMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ButtonMIMEMouseClicked
-        String tipoMIME =TextMIME.getText();
+        String extension =TextMIME.getText();
         TextMIME.setText("");
-        System.out.println(tipoMIME);
-        //TipoMIME.getTiposMime().add(tipoMIME);
+        System.out.println(extension);
+        String content =TextContent.getText();
+        TextContent.setText("");
+        System.out.println(content);
+        TipoMIME mime = new TipoMIME(extension, content);
+        TipoMIME.getTiposMime().add(mime);
+        TipoMIME.ArchivartiposMime(TipoMIME.getTiposMime());
     }//GEN-LAST:event_ButtonMIMEMouseClicked
 
     private void TextMIMEActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_TextMIMEActionPerformed
@@ -302,6 +305,7 @@ public class Ventana extends javax.swing.JFrame {
     private javax.swing.JButton ButtonMIME;
     private javax.swing.JButton EnviarRespuestas;
     private javax.swing.ButtonGroup Estado;
+    private javax.swing.JTextField TextContent;
     private javax.swing.JTextField TextMIME;
     private javax.swing.JTextField TextRespuestas;
     private javax.swing.JLabel jLabel1;
@@ -311,7 +315,6 @@ public class Ventana extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     public javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextField jTextField1;
     private javax.swing.JRadioButton of;
     private javax.swing.JRadioButton on;
     // End of variables declaration//GEN-END:variables

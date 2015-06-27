@@ -15,8 +15,8 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
     private Socket socket;
     private int timeout;
     //ruta relativa desde src/servidorweb/web/
-    static  String RUTAPRINC = "web/";
-    static final private String DOCPRINC = "index.html";
+    static  String RUTAPRINC = "web";
+    static final private String DOCPRINC = "/index.html";
     static private String DOCERROR = "error.html";
 
     BufferedReader entrada;
@@ -72,11 +72,14 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
         String recursoSol = null;
         String tipoArchivo = null;
         String cabecera="HTTP/1.x ";
+        String cabeceraIndex="200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " 
+                            + "\r\n" + "Content-Type: text/html\r\n" + "\r\n";
         
         opPeticion = tipoPeticion(cabeceraNueva);
         //obtenemos el nombre recurso que solicita el cliente
         recursoSol = recursoSolicitado(cabeceraNueva);
             ruta = RUTAPRINC+recursoSol;
+            
             try {
                 fichero = new FileInputStream(ruta);
             } catch (Exception ex) {
@@ -183,53 +186,71 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
             extension = extension.toLowerCase();
             String tipoArchivo = null;
             
-//            for (TipoMIME MIME : TipoMIME.getTiposMime()){
-//                if (extension.endsWith(MIME.getExtension())){
-//                tipoArchivo="Content-Type: " + MIME.getExtension() + "\r\n";
-//            }
+            for (TipoMIME MIME : TipoMIME.getTiposMime()){
+                if (extension.endsWith(MIME.getExtension())){
+                tipoArchivo="Content-Type: " + MIME.getExtension() + "\r\n";
+            }
                 
-            if (extension.endsWith(".html")){
-                tipoArchivo="Content-Type: text/html\r\n";
-            }
-            if (extension.endsWith(".htm")){
-                tipoArchivo="Content-Type: text/html\r\n";
-            }
-            if (extension.endsWith(".txt")){
-                tipoArchivo="Content-Type: text/plain\r\n";
-            }
-            if (extension.endsWith(".gif")){
-                tipoArchivo="Content-Type: image/gif\r\n";
-            }
-            if (extension.endsWith(".jpg")){
-                tipoArchivo="Content-Type: image/jpeg\r\n";
-            }
-            if (extension.endsWith(".zip")){
-                tipoArchivo="Content-Type: image/jpeg\r\n";
-            }
-            if (extension.endsWith(".zip")){
-                tipoArchivo="Content-Type: application/zip\r\n";
-            }
-            return tipoArchivo;
+//            if (extension.endsWith(".html")){
+//                tipoArchivo="Content-Type: text/html\r\n";
+//            }
+//            if (extension.endsWith(".htm")){
+//                tipoArchivo="Content-Type: text/html\r\n";
+//            }
+//            if (extension.endsWith(".txt")){
+//                tipoArchivo="Content-Type: text/plain\r\n";
+//            }
+//            if (extension.endsWith(".gif")){
+//                tipoArchivo="Content-Type: image/gif\r\n";
+//            }
+//            if (extension.endsWith(".jpg")){
+//                tipoArchivo="Content-Type: image/jpeg\r\n";
+//            }
+//            if (extension.endsWith(".zip")){
+//                tipoArchivo="Content-Type: image/jpeg\r\n";
+//            }
+//            if (extension.endsWith(".zip")){
+//                tipoArchivo="Content-Type: application/zip\r\n";
+//            }
+        }
+             return tipoArchivo;
     }
     
-    public String recursoSolicitado(String peticion){
+    String[] recursoToArray(String ruta){
+        String[] campos = ruta.split("/");
+        return campos;
+    }
+    
+    public String recursoSolicitado(String cabeceraHttp){
+        ArrayList<String> head = new ArrayList<String>();
+        
             int inicio = 0;
             int fin = 0;
             String webPeti = null;
-            for (int pos=0; pos<peticion.length(); pos++){
+            for (int pos=0; pos<cabeceraHttp.length(); pos++){
                 // Buscamos el ultimo espacio en blanco en la linea
-                if (peticion.charAt(pos)==' ' && inicio!=0){
+                if (cabeceraHttp.charAt(pos)==' ' && inicio!=0){
                     fin=pos;
                     break;
                 }
                 // Buscamos el primer espacio en blanco en la linea
-                if (peticion.charAt(pos)==' ' && inicio==0){
+                if (cabeceraHttp.charAt(pos)==' ' && inicio==0){
                     inicio=pos;
                 }
             }
-            webPeti = peticion.substring(inicio+2, fin);
+            webPeti = cabeceraHttp.substring(inicio+2, fin);
+            
             System.out.println(webPeti);
             return webPeti;
+    }
+    public boolean esIndex (String ruta){ 
+        ruta+="a/";
+        String[] campos = ruta.split("/");
+        
+            if (campos[campos.length-1]=="a"){
+                return true;
+            }
+        return false; 
     }
 
     public ArrayList<String> cabeceraToArray(BufferedReader entrada) throws IOException{

@@ -1,1 +1,7 @@
 .html;text/html;
+.htm;text/html;
+.txt;text/plain;
+.gif;image/gif;
+.jpg;image/jpeg;
+.zip;image/jpeg;
+.zip;application/zip;

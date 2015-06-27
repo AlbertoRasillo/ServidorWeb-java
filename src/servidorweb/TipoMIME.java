@@ -5,7 +5,12 @@
  */
 package servidorweb;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -13,11 +18,14 @@ import java.util.ArrayList;
  * @author Axtro
  */
 public class TipoMIME {
+    
+    private static final String SEPARADOR  = ";"; 
+    
     private String extension;
     private String contentType;
     
     private static ArrayList<TipoMIME> tiposMime = new ArrayList<TipoMIME>();
-    private static final String NOMFICHERO = "tiposmime";
+    private static final String NOMFICHERO = "tiposmime.txt";
 
     public TipoMIME(String extension, String contentType) {
         this.extension = extension;
@@ -63,5 +71,25 @@ public class TipoMIME {
         }catch(Exception ex){
             System.out.println(ex.toString());
         }
+    }
+     public static ArrayList<TipoMIME> cargarClientes() throws FileNotFoundException, IOException{
+        try{
+            File f = new File(NOMFICHERO);
+            if (f.exists()){
+                FileReader fr = new FileReader(NOMFICHERO);
+                BufferedReader br = new BufferedReader(fr);
+                String linea ;
+                
+                while ((linea = br.readLine())!= null){
+                    String tokens[] = linea.split(SEPARADOR);
+                    TipoMIME obj = new TipoMIME(tokens[0], tokens[1]);
+                    tiposMime.add(obj);
+                }
+                fr.close();
+            }    
+        } catch(Exception ex){
+            System.out.println(ex.toString());
+        }
+        return tiposMime;
     }
 }
