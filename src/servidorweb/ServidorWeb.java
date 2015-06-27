@@ -23,11 +23,10 @@ public class ServidorWeb extends Thread {
     private final int PUERTO=9999;
     private String estado;
     private int NUMCLIENTES = 50;
-    private int Comparador;
     ServerSocket socketServidor;
-    private ExecutorService exec=Executors.newFixedThreadPool(NUMCLIENTES);
-    private static ArrayList<String> tiposMime = new ArrayList<String>();
-    private static final String NOMFICHERO = "tiposmime";
+    private ExecutorService exec;
+   
+   
 
     
     public ServidorWeb() throws IOException{
@@ -41,14 +40,10 @@ public class ServidorWeb extends Thread {
     
     
     public void run(){
-        //exec = Executors.newFixedThreadPool(NUMCLIENTES);
+        exec = Executors.newFixedThreadPool(NUMCLIENTES);
         try {
             while (true){
-    //            if(this.contadorPeticiones<NºClientes){
-                    if (NUMCLIENTES!=Comparador){
-                        exec=Executors.newFixedThreadPool(Comparador);
-                        NUMCLIENTES=Comparador;
-                    }
+
                     try {
                         Socket socketClien = socketServidor.accept();
                         System.out.println(socketClien.getInetAddress().toString());
@@ -59,7 +54,6 @@ public class ServidorWeb extends Thread {
                     } catch (IOException ex) {
                         Logger.getLogger(ServidorWeb.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                //}
             } 
         }
         finally {
@@ -67,10 +61,6 @@ public class ServidorWeb extends Thread {
         }
     }
 
-    public void setComparador(int Comparador) {
-        this.Comparador = Comparador;
-    }
-    
     public int getPUERTO() {
         return PUERTO;
     }
@@ -94,27 +84,6 @@ public class ServidorWeb extends Thread {
         //interrupt o stop???
         sw.interrupt();
     }
-
-    public static void setTiposMime(ArrayList<String> tiposMime) {
-        ServidorWeb.tiposMime = tiposMime;
-    }
-
-    public static void tiposMime(ArrayList<String> mimes){
-        try{
-            FileWriter fw = new FileWriter(NOMFICHERO, false); 
-            
-            for (String mime : mimes) {
-                fw.write(mime);
-                fw.write(13);
-                fw.write(10);
-                //--->
-            }
-            fw.close();    
-        }catch(Exception ex){
-            System.out.println(ex.toString());
-        }
-    }
-  
 }
     
 

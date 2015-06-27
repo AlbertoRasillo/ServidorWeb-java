@@ -32,34 +32,38 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
     @Override
     public void run(){
         try {
-            cabeceraPeticion= leerCabeceraPeticion(entrada);
-             
-        } catch (IOException ex) {
-            Logger.getLogger(ProcesoDePeticion.class.getName()).log(Level.SEVERE, null, ex);
+                cabeceraPeticion= cabeceraToArray(entrada);
+
+            } catch (IOException ex) {
+                Logger.getLogger(ProcesoDePeticion.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        if(cabeceraPeticion.get(0)!=null){
+            try {
+                respuesta(cabeceraPeticion.get(0));
+            } catch (IOException ex) {
+                Logger.getLogger(ProcesoDePeticion.class.getName()).log(Level.SEVERE, null, ex); 
+            }            
         }
         try {
-            respuesta(cabeceraPeticion.get(0));
-        } catch (IOException ex) {
-            Logger.getLogger(ProcesoDePeticion.class.getName()).log(Level.SEVERE, null, ex); 
+                entrada.close();
+            } catch (IOException ex) {
+                Logger.getLogger(ProcesoDePeticion.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        if(cabeceraPeticion.get(0)!=null){
+            try {
+                salida.close();
+            } catch (IOException ex) {
+                Logger.getLogger(ProcesoDePeticion.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-        try {
-            entrada.close();
-        } catch (IOException ex) {
-            Logger.getLogger(ProcesoDePeticion.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            salida.close();
-        } catch (IOException ex) {
-            Logger.getLogger(ProcesoDePeticion.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            socket.close();
-        } catch (IOException ex) {
-            Logger.getLogger(ProcesoDePeticion.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            try {
+                socket.close();
+            } catch (IOException ex) {
+                Logger.getLogger(ProcesoDePeticion.class.getName()).log(Level.SEVERE, null, ex);
+            }
          
     }
-    private void respuesta(String cabeceraNueva) throws IOException{
+    public void respuesta(String cabeceraNueva) throws IOException{
         salida = new DataOutputStream(socket.getOutputStream());
         String ruta = null;
         FileInputStream fichero = null;
@@ -128,7 +132,7 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
             
         
     }
-    private void enviarFichero(String opPeticion, FileInputStream fichero){
+    public void enviarFichero(String opPeticion, FileInputStream fichero){
             // la peticion es GET, el contenido tambien
             if (opPeticion=="GET"){
                 try{
@@ -149,20 +153,13 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
                 }
             }
     }
-    private String tipoPeticion(String peticion){
+    public String tipoPeticion(String peticion){
         
         String tipoPetic = peticion;
         String opPeticion = null;
         System.out.println(tipoPetic);
-        //falla mirar para coger head de otra manera
-        if (tipoPetic.startsWith("HEAD")){
-            opPeticion = "HEAD";
-        }
-        if (tipoPetic.startsWith("GET")){
-            opPeticion = "GET";
-        }
-        //comprobar que funciona este error
         if (tipoPetic == null){
+        //falla mirar para coger head de otra manera
             try{
                 opPeticion = "";
                 System.err.println("Se ha detectado un error 501");
@@ -170,37 +167,52 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
             }catch(Exception ex){
             }
         }
+        else{
+            if (tipoPetic.startsWith("HEAD")){
+                opPeticion = "HEAD";
+            }
+            if (tipoPetic.startsWith("GET")){
+                opPeticion = "GET";
+            }
+        //comprobar que funciona este error
+        }
         return opPeticion;
-    }
+    }   
     
-    private String tipoArchivo(String ruta){
-            ruta = ruta.toLowerCase();
+    public String tipoArchivo(String extension){
+            extension = extension.toLowerCase();
             String tipoArchivo = null;
-            if (ruta.endsWith(".html")){
+            
+//            for (TipoMIME MIME : TipoMIME.getTiposMime()){
+//                if (extension.endsWith(MIME.getExtension())){
+//                tipoArchivo="Content-Type: " + MIME.getExtension() + "\r\n";
+//            }
+                
+            if (extension.endsWith(".html")){
                 tipoArchivo="Content-Type: text/html\r\n";
             }
-            if (ruta.endsWith(".htm")){
+            if (extension.endsWith(".htm")){
                 tipoArchivo="Content-Type: text/html\r\n";
             }
-            if (ruta.endsWith(".txt")){
+            if (extension.endsWith(".txt")){
                 tipoArchivo="Content-Type: text/plain\r\n";
             }
-            if (ruta.endsWith(".gif")){
+            if (extension.endsWith(".gif")){
                 tipoArchivo="Content-Type: image/gif\r\n";
             }
-            if (ruta.endsWith(".jpg")){
+            if (extension.endsWith(".jpg")){
                 tipoArchivo="Content-Type: image/jpeg\r\n";
             }
-            if (ruta.endsWith(".zip")){
+            if (extension.endsWith(".zip")){
                 tipoArchivo="Content-Type: image/jpeg\r\n";
             }
-            if (ruta.endsWith(".zip")){
+            if (extension.endsWith(".zip")){
                 tipoArchivo="Content-Type: application/zip\r\n";
             }
             return tipoArchivo;
     }
     
-    private String recursoSolicitado(String peticion){
+    public String recursoSolicitado(String peticion){
             int inicio = 0;
             int fin = 0;
             String webPeti = null;
@@ -220,7 +232,7 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
             return webPeti;
     }
 
-    public ArrayList<String> leerCabeceraPeticion(BufferedReader entrada) throws IOException{
+    public ArrayList<String> cabeceraToArray(BufferedReader entrada) throws IOException{
         ArrayList<String> cabeceraPeticion = new ArrayList<String>();
         String linea;
             for (int i=0; i<=7; i++){
@@ -241,7 +253,7 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
     }
     
     
-    private String crearCabecera(int codigoRepuesta, int tipoArchivo){
+    public String crearCabecera(int codigoRepuesta, int tipoArchivo){
         String cabecera="HTTP/1.x ";
         
         /**
