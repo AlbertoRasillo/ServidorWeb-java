@@ -97,7 +97,6 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
         //obtenemos el nombre recurso que solicita el cliente
         recursoSol = recursoSolicitado(cabeceraNueva);
         String [] rutaVirt = recursoToArray(recursoSol);
-        DirectorioVirtual.cargarDirectorios();
         for( DirectorioVirtual dv: DirectorioVirtual.directorios )
         {
             if( dv.getNombre().equals(rutaVirt[0] ))
@@ -140,7 +139,8 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
                     salida.writeBytes(cabecera);
                     enviarFichero(opPeticion, fichero);
                 } catch (Exception e) {
-                    fichero = new FileInputStream(RUTAPRINC+docError);
+                    ruta = RUTAPRINC+recursoSol;
+                    fichero = new FileInputStream(ruta+docError);
                     cabecera = cabecera404;
                     salida.writeBytes(cabecera);
                     enviarFichero(opPeticion, fichero);

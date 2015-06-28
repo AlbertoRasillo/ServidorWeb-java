@@ -52,6 +52,7 @@ public class Main {
         JF.setVisible(true);
         TipoMIME.cargarTipoMime();
         Cliente.cargarClientes();
+        DirectorioVirtual.cargarDirectorios();
        
 
     }
