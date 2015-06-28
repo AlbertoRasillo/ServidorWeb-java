@@ -17,7 +17,21 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
     //ruta relativa desde src/servidorweb/web/
     static  String RUTAPRINC = "web";
     static final private String DOCPRINC = "/index.html";
-    static private String DOCERROR = "error.html";
+    static final private String DOCERROR = "error.html";
+    static private String cabecera = "HTTP/1.x ";
+    static final private String cabeceraIndex = "HTTP/1.x "+"200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " 
+                            + "\r\n" + "Content-Type: text/html\r\n" + "\r\n";
+    static final private String cabecera404 = "HTTP/1.x "+"404 No encontrado" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " 
+                            + "\r\n" + "Content-Type: text/html\r\n" + "\r\n";
+    static final private String mensaje404 = "No se pudo enviar el mensaje de error 404";
+    static final private String mensajeError404 = "No se pudo enviar el mensaje de error 404";
+    static final private String cabecera200ConCookie = "HTTP/1.x " + "200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " + "\r\n";
+    static final private String cabecera200SinCookie = "HTTP/1.x " + "200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" + 
+                             "\r\n" + "Date:" + "\r\n" + "Set-Cookie: ";
+    static final private String mensajeErrorIndex = "No se pudo enviar pagina index";
+    static final private String mensajeError200Cabecera  = "No se pudo enviar la cabecera de la respuesta correctamente";
+    static final private String mensajeErrorEnviarFichero = "No se pudo enviar el contenido de la respuesta correctamente";
+    static final private String etiquetaError = "Error: ";
 
     BufferedReader entrada;
     DataOutputStream salida;
@@ -73,84 +87,97 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
         String tipoArchivo = null;
         String paginaPrincipal = null;
         String docError = null;
-        String cabecera="HTTP/1.x ";
-        String cabeceraIndex="200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " 
-                            + "\r\n" + "Content-Type: text/html\r\n" + "\r\n";
+
         
         opPeticion = tipoPeticion(cabeceraNueva);
         //obtenemos el nombre recurso que solicita el cliente
         recursoSol = recursoSolicitado(cabeceraNueva);
         String [] rutaVirt = recursoToArray(recursoSol);
-        for(DirectorioVirtual dv: DirectorioVirtual.directorios ){
-            if(dv.getNombre() == rutaVirt[0]){
+        for( DirectorioVirtual dv: DirectorioVirtual.directorios )
+        {
+            if( dv.getNombre() == rutaVirt[0] )
+            {
                 paginaPrincipal = dv.getDocumentoPrincipal();
                 docError = dv.getPaginaError();
             }
         }
-        if(esIndex(recursoSol)== true){
-            try {
-                fichero = new FileInputStream(RUTAPRINC+paginaPrincipal);
+        if(esIndex(recursoSol) == true)
+        {
+            try 
+            {
+                fichero = new FileInputStream(RUTAPRINC + paginaPrincipal);
                 salida.writeBytes(cabeceraIndex);
-                enviarFichero(opPeticion, fichero);
-            } catch (Exception e) {
-                System.err.println("No se pudo enviar pagina index");
+                enviarFichero(opPeticion, fichero);               
+            } 
+            catch (Exception e) 
+            {
+                System.err.println(mensajeErrorIndex);
                 System.err.println();
             }
-        }else{
-        
+        }
+        else
+        {
             ruta = RUTAPRINC+recursoSol;
-            
-            try {
+            try 
+            {
                 fichero = new FileInputStream(ruta);
-            } catch (Exception ex) {
-                System.err.println("Error: "+ex.getMessage());
-                System.err.println("Se ha detectado un error 404");
+            } 
+            catch (Exception ex) 
+            {
+                System.err.println(etiquetaError + ex.getMessage());
+                System.err.println(mensaje404);
                 System.err.println();
-                try {
-                    //mostramos el fichero de error 404 - pagina no encontrada
+                try 
+                {   //mostramos el fichero de error 404 - pagina no encontrada
                     fichero = new FileInputStream(RUTAPRINC+docError);
-                    cabecera=cabecera+"404 No encontrado" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " 
-                            + "\r\n" + "Content-Type: text/html\r\n" + "\r\n";
+                    cabecera = cabecera404;
                     salida.writeBytes(cabecera);
                     enviarFichero(opPeticion, fichero);
                     return;
-                } catch (Exception ex2) {
-                        System.err.println("Error: "+ex2.getMessage());
-                        System.err.println("No se pudo enviar el mensaje de error 404");
-                        System.err.println();
-                }
-                
+                } 
+                catch (Exception ex2) 
+                {
+                    System.err.println(etiquetaError + ex2.getMessage());
+                    System.err.println(mensajeError404);
+                    System.err.println();
+                }               
             }
-            
-            if (cabeceraPeticion != null){
+            //este if creo que no hace falta
+            if (cabeceraPeticion != null)
+                {
                 if(buscarCookie(cabeceraPeticion)== null||
-                        Cliente.ExisteCliente(buscarCookie(cabeceraPeticion), Cliente.getClientes())){
-                        Cliente client = new Cliente();
-                        client.getCoockie();
-                        cabecera=cabecera+"200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" + 
-                                "Set-Cookie: " + client.getCoockie() + "\r\n" + "Date:" + "\r\n";
-                        tipoArchivo = tipoArchivo(ruta);
-                        cabecera = cabecera + tipoArchivo +"\r\n";
+                    Cliente.ExisteCliente(buscarCookie(cabeceraPeticion), Cliente.getClientes()))
+                {
+                    Cliente client = new Cliente();
+                    client.getCoockie();
+                    cabecera = cabecera200SinCookie + client.getCoockie();
+                    tipoArchivo = tipoArchivo(ruta);
+                    cabecera = cabecera + tipoArchivo + "\r\n";
                 }
-                else if(Cliente.ExisteCliente(buscarCookie(cabeceraPeticion), Cliente.getClientesBaneados())){
+                else if(Cliente.ExisteCliente(buscarCookie(cabeceraPeticion), Cliente.getClientesBaneados()))
+                {
                     //
                 }
-                else{
-                        cabecera=cabecera+"200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " + "\r\n";
-                        tipoArchivo = tipoArchivo(ruta);
-                        cabecera = cabecera + tipoArchivo +"\r\n";
+                else
+                {
+                    cabecera = cabecera200ConCookie;
+                    tipoArchivo = tipoArchivo(ruta);
+                    cabecera = cabecera + tipoArchivo + "\r\n";
                 }
                  // Enviamos la cabecera y recurso 
-                    try{
-                        salida.writeBytes(cabecera);
-                        enviarFichero(opPeticion, fichero);
-                    }catch(IOException ex){
-                        // Quizás no ha sido posible enviar la cabecera
-                        System.err.println("Error: "+ex.getMessage());
-                        System.err.println("No se pudo enviar la cabecera de la respuesta correctamente");
-                        System.err.println();
-                        return; // No se debe seguir adelante
-                    }
+                try
+                {
+                    salida.writeBytes(cabecera);
+                    enviarFichero(opPeticion, fichero);
+                }
+                catch(IOException ex)
+                {
+                    // Quizás no ha sido posible enviar la cabecera
+                    System.err.println(etiquetaError + ex.getMessage());
+                    System.err.println(mensajeError200Cabecera);
+                    System.err.println();
+                    return; // No se debe seguir adelante
+                }
             }
         }    
         
@@ -171,7 +198,7 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
                 }catch (Exception ex){
                     // Quizás no ha sido posible enviar el contenido
                     System.err.println("Error: "+ex.getMessage());
-                    System.err.println("No se pudo enviar el contenido de la respuesta correctamente");
+                    System.err.println(mensajeErrorEnviarFichero);
                     System.err.println();
                 }
             }
@@ -294,7 +321,7 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
     }
     
     
-    public String crearCabecera(int codigoRepuesta, int tipoArchivo){
+    public String crearCabecera(int codigoCabecera, int tipoArchivo){
         String cabecera="HTTP/1.x ";
         
         /**
@@ -304,20 +331,30 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
          * 501:No implementado
          * 
          */
-        switch (codigoRepuesta){
-            case 200:
-                cabecera=cabecera+"200 OK";
-                break;
-            case 404:
-                cabecera=cabecera+"404 No encontrado";
-                break;
-            case 501:
-                cabecera=cabecera+"501 No implementado";
-                break;
+        if(codigoCabecera == 404)
+        {
+            cabecera = cabecera + "404 No encontrado" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " 
+                            + "\r\n" + "Content-Type: text/html\r\n" + "\r\n";
         }
-        cabecera = cabecera + "\r\n";
-        cabecera = cabecera + "Transfer-Encoding: " + "\r\n";
-        cabecera = cabecera + "Date: " + "\r\n";
+        if(codigoCabecera == 200)
+        {
+            cabecera = cabecera + "HTTP/1.x " + "200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " + "\r\n";
+        }
+        
+//        switch (codigoRepuesta){
+//            case 200:
+//                cabecera=cabecera+"200 OK";
+//                break;
+//            case 404:
+//                cabecera=cabecera+"404 No encontrado";
+//                break;
+//            case 501:
+//                cabecera=cabecera+"501 No implementado";
+//                break;
+//        }
+//        cabecera = cabecera + "\r\n";
+//        cabecera = cabecera + "Transfer-Encoding: " + "\r\n";
+//        cabecera = cabecera + "Date: " + "\r\n";
 //        switch(tipoArchivo){
 //            // El caso -1 no devuelve nada porque lo reservamos para errores
 //            case -1:
