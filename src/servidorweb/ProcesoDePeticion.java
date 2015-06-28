@@ -92,12 +92,11 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
         String paginaPrincipal = null;
         String docError = null;
 
-        
         opPeticion = tipoPeticion(cabeceraNueva);
         //obtenemos el nombre recurso que solicita el cliente
         recursoSol = recursoSolicitado(cabeceraNueva);
-        paginaPrincipal = paginaPrincipal(recursoSol);
-        docError = paginaError(recursoSol);
+        paginaPrincipal = buscaPaginaPrincipal(recursoSol);
+        docError = buscaPaginaError(recursoSol);
         if (Cliente.ExisteCliente(buscarCookie(cabeceraPeticion), Cliente.getClientesBaneados())) {
             //no mostramos pagina a baneados
         }
@@ -146,7 +145,7 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
 //        {
 //            try 
 //            {
-//                fichero = new FileInputStream(RUTAPRINC + paginaPrincipal);
+//                fichero = new FileInputStream(RUTAPRINC + buscaPaginaPrincipal);
 //                salida.writeBytes(cabeceraIndex);
 //                enviarFichero(opPeticion, fichero);               
 //            } 
@@ -272,7 +271,7 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
         return opPeticion;
     } 
     
-    public String paginaPrincipal(String recursoSol){
+    public String buscaPaginaPrincipal(String recursoSol){
         String paginaPrincipal = null;
         String [] rutaVirt = recursoToArray(recursoSol);
         for( DirectorioVirtual dv: DirectorioVirtual.directorios )
@@ -285,7 +284,7 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
         return paginaPrincipal;
     }
     
-    public String paginaError(String recursoSol){
+    public String buscaPaginaError(String recursoSol){
         String docError = null;
         String [] rutaVirt = recursoToArray(recursoSol);
         for( DirectorioVirtual dv: DirectorioVirtual.directorios )
