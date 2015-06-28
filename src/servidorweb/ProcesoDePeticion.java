@@ -96,15 +96,8 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
         opPeticion = tipoPeticion(cabeceraNueva);
         //obtenemos el nombre recurso que solicita el cliente
         recursoSol = recursoSolicitado(cabeceraNueva);
-        String [] rutaVirt = recursoToArray(recursoSol);
-        for( DirectorioVirtual dv: DirectorioVirtual.directorios )
-        {
-            if( dv.getNombre().equals(rutaVirt[0] ))
-            {
-                paginaPrincipal = dv.getDocumentoPrincipal();
-                docError = dv.getPaginaError();
-            }
-        }
+        paginaPrincipal = paginaPrincipal(recursoSol);
+        docError = paginaError(recursoSol);
         if (Cliente.ExisteCliente(buscarCookie(cabeceraPeticion), Cliente.getClientesBaneados())) {
             //no mostramos pagina a baneados
         }
@@ -230,6 +223,7 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
 //        }    
         
     }
+    
     public void enviarFichero(String opPeticion, FileInputStream fichero){
             // la peticion es GET, el contenido tambien
             if (opPeticion=="GET"){
@@ -251,6 +245,7 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
                 }
             }
     }
+    
     public String tipoPeticion(String peticion){
         
         String tipoPetic = peticion;
@@ -275,7 +270,33 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
         //comprobar que funciona este error
         }
         return opPeticion;
-    }   
+    } 
+    
+    public String paginaPrincipal(String recursoSol){
+        String paginaPrincipal = null;
+        String [] rutaVirt = recursoToArray(recursoSol);
+        for( DirectorioVirtual dv: DirectorioVirtual.directorios )
+        {
+            if( dv.getNombre().equals(rutaVirt[0] ))
+            {
+                paginaPrincipal = dv.getDocumentoPrincipal();
+            }
+        }
+        return paginaPrincipal;
+    }
+    
+    public String paginaError(String recursoSol){
+        String docError = null;
+        String [] rutaVirt = recursoToArray(recursoSol);
+        for( DirectorioVirtual dv: DirectorioVirtual.directorios )
+        {
+            if( dv.getNombre().equals(rutaVirt[0] ))
+            {
+                docError = dv.getPaginaError();
+            }
+        }
+        return docError;
+    }
     
     public String tipoArchivo(String extension) throws IOException{
             extension = extension.toLowerCase();
@@ -337,6 +358,7 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
             System.out.println(webPeti);
             return webPeti;
     }
+    
     public boolean esIndex (String ruta){ 
         ruta+="a/";
         String[] campos = ruta.split("/");
@@ -432,7 +454,7 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
         //cabecera=cabecera1+"\r\n";
         
         return cabecera1;
-    }
+        }
     }
 
     
