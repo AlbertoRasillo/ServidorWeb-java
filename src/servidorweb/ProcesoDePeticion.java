@@ -81,10 +81,10 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
         //obtenemos el nombre recurso que solicita el cliente
         recursoSol = recursoSolicitado(cabeceraNueva);
         String [] rutaVirt = recursoToArray(recursoSol);
-        for(DirectorioVirtual dv: DirectorioVirtual.Directorios ){
+        for(DirectorioVirtual dv: DirectorioVirtual.directorios ){
             if(dv.getNombre() == rutaVirt[0]){
                 paginaPrincipal = dv.getDocumentoPrincipal();
-                docError = dv.getPáginaError();
+                docError = dv.getPaginaError();
             }
         }
         if(esIndex(recursoSol)== true){
