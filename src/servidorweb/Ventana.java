@@ -279,11 +279,6 @@ public class Ventana extends javax.swing.JFrame {
     private void ofMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ofMouseClicked
         Cliente.ArchivarClientes(Cliente.getClientes());
         Tarea.suspend();
-       try {
-           Tarea.join();
-       } catch (InterruptedException ex) {
-           Logger.getLogger(Ventana.class.getName()).log(Level.SEVERE, null, ex);
-       }
         sw.suspend();
         System.out.println("server apagado");
         
@@ -363,8 +358,11 @@ public class Ventana extends javax.swing.JFrame {
     private void ButtonBanearMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ButtonBanearMouseClicked
         JFrame frame = new JFrame("Banear");
         String coockie = JOptionPane.showInputDialog(frame, "Introduce la coockie a banear");
-        if(Cliente.ExisteCliente(coockie, Cliente.getClientes())&&Cliente.ExisteCliente(coockie, Cliente.getClientesBaneados())!=false){
-            Cliente.getClientesBaneados().add(Cliente.StringToCliente(coockie));
+        if(Cliente.ExisteCliente(coockie, Cliente.getClientes())){
+            //Cliente.getClientesBaneados().add(Cliente.StringToCliente(coockie));
+            Cliente cli =Cliente.StringToCliente(coockie);
+            Cliente.banear(cli);
+            
         }
         else {
             System.out.println("El cliente no existe o está baneado");

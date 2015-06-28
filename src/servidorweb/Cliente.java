@@ -209,7 +209,7 @@ public class Cliente {
  
     public static boolean banear(Cliente cli) {
         if(ExisteCliente(cli.coockie, clientes)) {
-            clientes.remove(cli);
+            //clientes.remove(cli);
             cli.setEstado(BANEADO);
             clientesBaneados.add(cli);
             return true;
