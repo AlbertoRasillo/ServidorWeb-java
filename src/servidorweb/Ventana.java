@@ -43,9 +43,9 @@ public class Ventana extends javax.swing.JFrame {
         ButtonMIME = new javax.swing.JButton();
         TextContent = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTextArea2 = new javax.swing.JTextArea();
+        TextClientes = new javax.swing.JTextArea();
         ButtonBanear = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        ButtonMostrarCliente = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
         TextPaneRespuestas = new javax.swing.JTextPane();
         jLabel5 = new javax.swing.JLabel();
@@ -147,9 +147,9 @@ public class Ventana extends javax.swing.JFrame {
             }
         });
 
-        jTextArea2.setColumns(20);
-        jTextArea2.setRows(5);
-        jScrollPane2.setViewportView(jTextArea2);
+        TextClientes.setColumns(20);
+        TextClientes.setRows(5);
+        jScrollPane2.setViewportView(TextClientes);
 
         ButtonBanear.setText("Banear Cliente");
         ButtonBanear.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -163,10 +163,15 @@ public class Ventana extends javax.swing.JFrame {
             }
         });
 
-        jButton2.setText("Mostrar Clientes");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
+        ButtonMostrarCliente.setText("Mostrar Clientes");
+        ButtonMostrarCliente.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ButtonMostrarClienteMouseClicked(evt);
+            }
+        });
+        ButtonMostrarCliente.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
+                ButtonMostrarClienteActionPerformed(evt);
             }
         });
 
@@ -221,7 +226,7 @@ public class Ventana extends javax.swing.JFrame {
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 231, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGroup(layout.createSequentialGroup()
-                            .addComponent(jButton2)
+                            .addComponent(ButtonMostrarCliente)
                             .addGap(18, 18, 18)
                             .addComponent(ButtonBanear))))
                 .addGap(0, 0, Short.MAX_VALUE))
@@ -238,7 +243,7 @@ public class Ventana extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(ButtonBanear)
-                            .addComponent(jButton2))
+                            .addComponent(ButtonMostrarCliente))
                         .addGap(18, 18, 18)
                         .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(layout.createSequentialGroup()
@@ -351,9 +356,9 @@ public class Ventana extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_ButtonBanearActionPerformed
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+    private void ButtonMostrarClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ButtonMostrarClienteActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton2ActionPerformed
+    }//GEN-LAST:event_ButtonMostrarClienteActionPerformed
 
     private void ButtonBanearMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ButtonBanearMouseClicked
         JFrame frame = new JFrame("Banear");
@@ -365,6 +370,12 @@ public class Ventana extends javax.swing.JFrame {
             System.out.println("El cliente no existe o está baneado");
         }
     }//GEN-LAST:event_ButtonBanearMouseClicked
+
+    private void ButtonMostrarClienteMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ButtonMostrarClienteMouseClicked
+       for (Cliente cli : Cliente.getClientes()){
+           TextClientes.setText(cli.cliente2CSV());
+       }
+    }//GEN-LAST:event_ButtonMostrarClienteMouseClicked
 
     private void actualizarTextArea(final String texto) {
         SwingUtilities.invokeLater(new Runnable() {
@@ -405,13 +416,14 @@ public class Ventana extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton ButtonBanear;
     private javax.swing.JButton ButtonMIME;
+    private javax.swing.JButton ButtonMostrarCliente;
     private javax.swing.JButton EnviarRespuestas;
     private javax.swing.ButtonGroup Estado;
+    private javax.swing.JTextArea TextClientes;
     private javax.swing.JTextField TextContent;
     private javax.swing.JTextField TextMIME;
     private javax.swing.JTextPane TextPaneRespuestas;
     private javax.swing.JTextField TextRespuestas;
-    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -422,7 +434,6 @@ public class Ventana extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     public javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextArea jTextArea2;
     private javax.swing.JRadioButton of;
     private javax.swing.JRadioButton on;
     // End of variables declaration//GEN-END:variables
