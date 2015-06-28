@@ -6,6 +6,8 @@
 package servidorweb;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 /**
@@ -43,10 +45,14 @@ public class Main {
 //                new NewJFrame().setVisible(true);
 //            }
 //        });
-
+        ExecutorService exec;
+        exec = Executors.newFixedThreadPool(ServidorWeb.getNUMCLIENTES());
+        ServidorWeb.setExec(exec);
         Ventana JF= new Ventana();
         JF.setVisible(true);
         TipoMIME.cargarClientes();
         Cliente.cargarClientes();
+       
+
     }
 }

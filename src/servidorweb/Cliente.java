@@ -25,6 +25,7 @@ import java.util.UUID;
  * @author Alberto
  */
 public class Cliente {
+    
     private static final String NOMFICHERO = "usuarios";
     private static final String SEPARADOR  = ";"; 
     private static final String BANEADO ="baneado";
@@ -140,18 +141,23 @@ public class Cliente {
         }
     }
     
-    
-        public static boolean ExisteCliente(String coockie, ArrayList<Cliente> clientes){
+    public static boolean ExisteCliente(String coockie, ArrayList<Cliente> clientes){
         boolean comprobar = false;
-        for(Cliente u1 : clientes){
-            if(u1.coockie.equals(coockie)){
+        for(Cliente c1 : clientes){
+            if(c1.coockie.equals(coockie)){
                 comprobar = true;
             }
         }
         return comprobar;
     }
-        
-            
+    public static Cliente StringToCliente(String coockie){
+        for(Cliente c1 : clientes){
+             if(c1.coockie.equals(coockie)){
+                 return c1;   
+            }
+        }
+        return null;
+    }           
     public String PaginaCliente2CSV(String cliente, String cabecera){
         StringBuffer sb = new StringBuffer();
         sb.append(cliente);
@@ -160,7 +166,6 @@ public class Cliente {
         sb.append(";");
         return sb.toString();   
     }
-    
     
      public static void ArchivarPeticionCliente(ArrayList<Cliente> clientes){
         try{
@@ -177,24 +182,21 @@ public class Cliente {
             System.out.println(ex.toString());
         }
     }
-     
-     
+      
     public static String calcularFechaExpiracion() {
         Calendar c1 = GregorianCalendar.getInstance();
         c1.add(Calendar.DATE, 7);
         return c1.getTime().toLocaleString();
     }
  
-    
-    public static Calendar stringToCalendar(String fecha) throws ParseException{
+    public static Calendar stringToCalendar(String fecha) throws ParseException {
         DateFormat df =  new  SimpleDateFormat ( FORMATOFECHA ); 
         Calendar cal   =  Calendar.getInstance(); 
         cal . setTime ( df . parse ( fecha ));
         return cal;
     }
-    
-    
-    public static void elimianrExpirados(ArrayList<Cliente> clientes) throws ParseException{
+      
+    public static void elimianrExpirados(ArrayList<Cliente> clientes) throws ParseException {
         Calendar c1 = GregorianCalendar.getInstance();
         for(Cliente cli: clientes){
             Calendar c2 = stringToCalendar(cli.fechaExpiracion);
@@ -205,9 +207,8 @@ public class Cliente {
         }
     }
  
- 
-    public static boolean banear(Cliente cli){
-        if(ExisteCliente(cli.coockie, clientes)){
+    public static boolean banear(Cliente cli) {
+        if(ExisteCliente(cli.coockie, clientes)) {
             clientes.remove(cli);
             cli.setEstado(BANEADO);
             clientesBaneados.add(cli);

@@ -5,13 +5,10 @@
  */
 package servidorweb;
 
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -22,38 +19,40 @@ import java.util.logging.Logger;
 public class ServidorWeb extends Thread {
     private final int PUERTO=9999;
     private String estado;
-    private int NUMCLIENTES = 50;
+    private static int NUMCLIENTESDEF = 50;
     ServerSocket socketServidor;
-    private ExecutorService exec;
+    private static ExecutorService exec;
    
    
 
     
-    public ServidorWeb() throws IOException{
+    public ServidorWeb() throws IOException {
        socketServidor= new ServerSocket(PUERTO);
        this.start();
     };
 
-    public ExecutorService getExec() {
+    public static ExecutorService getExec() {
         return exec;
+    }
+
+    public static void setExec(ExecutorService exec) {
+        ServidorWeb.exec = exec;
     }
     
     
-    public void run(){
-        exec = Executors.newFixedThreadPool(NUMCLIENTES);
+    public void run() {
+
         try {
-            while (true){
-
-                    try {
-                        Socket socketClien = socketServidor.accept();
-                        System.out.println(socketClien.getInetAddress().toString());
-                        exec.execute (new ProcesoDePeticion(socketClien));
-                        // ProcesoDePeticion procesoDePeticion = new ProcesoDePeticion(socketClien);
-                        System.out.println("hilo servidor web");
-
-                    } catch (IOException ex) {
-                        Logger.getLogger(ServidorWeb.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+            while (true) {
+                try {
+                    Socket socketClien = socketServidor.accept();
+                    System.out.println(socketClien.getInetAddress().toString());
+                    exec.execute (new ProcesoDePeticion(socketClien));
+                     ProcesoDePeticion procesoDePeticion = new ProcesoDePeticion(socketClien);
+                    System.out.println("hilo servidor web");
+                }catch (IOException ex) {   
+                    Logger.getLogger(ServidorWeb.class.getName()).log(Level.SEVERE, null, ex);
+                }
             } 
         }
         finally {
@@ -69,8 +68,8 @@ public class ServidorWeb extends Thread {
         return estado;
     }
 
-    public int getNUMCLIENTES() {
-        return NUMCLIENTES;
+    public static int getNUMCLIENTES() {
+        return NUMCLIENTESDEF;
     }
 
     public void setEstado(String estado) {
@@ -78,10 +77,10 @@ public class ServidorWeb extends Thread {
     }
 
     public void setNUMCLIENTES(int NUMCLIENTES) {
-        this.NUMCLIENTES = NUMCLIENTES;
+        this.NUMCLIENTESDEF = NUMCLIENTES;
     }
-    public void pararServidor(ServidorWeb sw){
-        //interrupt o stop???
+    
+    public void pararServidor(ServidorWeb sw) {
         sw.interrupt();
     }
 }
