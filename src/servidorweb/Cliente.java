@@ -99,7 +99,8 @@ public class Cliente {
                 while ((linea = br.readLine())!= null){
                     String tokens[] = linea.split(SEPARADOR);
                     Cliente obj = new Cliente(tokens[0], tokens[1],tokens[2]);
-                    if (tokens[1]== BANEADO){
+                    System.out.println(tokens[1]);
+                    if (tokens[1].equals(BANEADO)){
                         clientesBaneados.add(obj);
                     }
                     clientes.add(obj);
@@ -209,7 +210,6 @@ public class Cliente {
  
     public static boolean banear(Cliente cli) {
         if(ExisteCliente(cli.coockie, clientes)) {
-            //clientes.remove(cli);
             cli.setEstado(BANEADO);
             clientesBaneados.add(cli);
             return true;

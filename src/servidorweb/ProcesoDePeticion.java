@@ -17,18 +17,26 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
     //ruta relativa desde src/servidorweb/web/
     static  String RUTAPRINC = "";
     static final private String DOCPRINC = "index.html";
-    static final private String DOCERROR = "error.html";
+    static final private String recursoBaneado = "baneado.html";
     static private String cabecera = "HTTP/1.x ";
     static final private String cabeceraIndex = "HTTP/1.x " +"200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " 
-                            + "\r\n" + "Content-Type: text/html\r\n" + "\r\n";
+                                                    + "\r\n" + "Content-Type: text/html\r\n" + "\r\n";
+    static final private String cabeceraBaneado = "HTTP/1.x " +"200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " 
+                                                    + "\r\n" + "Content-Type: text/html\r\n" + "\r\n";
+    
     static final private String cabecera404 = "HTTP/1.x "+"404 No encontrado" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " 
-                            + "\r\n" + "Content-Type: text/html\r\n" + "\r\n";
+                                                    + "\r\n" + "Content-Type: text/html\r\n" + "\r\n";
+    
     static final private String mensaje404 = "No se pudo enviar el mensaje de error 404";
     static final private String mensajeError404 = "No se pudo enviar el mensaje de error 404";
+    
     static final private String cabecera200ConCookie = "HTTP/1.x " + "200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: ";
-    static final private String cabecera200SinCookie = "HTTP/1.x " + "200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" + 
-                             "\r\n" + "Date:" + "\r\n" + "Set-Cookie: ";
+    
+    static final private String cabecera200SinCookie = "HTTP/1.x " + "200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" 
+                                                             + "Date:" + "\r\n" + "Set-Cookie: ";
+    
     static final private String mensajeErrorIndex = "No se pudo enviar pagina index";
+    static final private String mensajeErrorBaneado = "No se pudo enviar pagina baneado";
     static final private String mensajeError501 = "Se ha detectado un error 501"; 
     static final private String mensajeError200Cabecera  = "No se pudo enviar la cabecera de la respuesta correctamente";
     static final private String mensajeErrorEnviarFichero = "No se pudo enviar el contenido de la respuesta correctamente";
@@ -97,16 +105,29 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
         recursoSol = recursoSolicitado(cabeceraNueva);
         paginaPrincipal = buscaPaginaPrincipal(recursoSol);
         docError = buscaPaginaError(recursoSol);
+        String bc =buscarCookie(cabeceraPeticion);
+        ArrayList<Cliente> arrcli = Cliente.getClientesBaneados();
         if (Cliente.ExisteCliente(buscarCookie(cabeceraPeticion), Cliente.getClientesBaneados())) {
-            //no mostramos pagina a baneados
+            try {
+                ruta = RUTAPRINC + recursoBaneado;
+                fichero = new FileInputStream(ruta);
+                salida.writeBytes(cabeceraBaneado);
+                enviarFichero(opPeticion, fichero);          
+            } catch (Exception e) {
+                System.err.println(mensajeErrorBaneado);
+                System.err.println();
+            }
         }
         else {
-            if (buscarCookie(cabeceraPeticion)== null || Cliente.ExisteCliente(buscarCookie(cabeceraPeticion), Cliente.getClientes())){
-                cabecera = crearCabecera(200, true) + saltoLinea;
+            //No tiene cookie
+            bc =buscarCookie(cabeceraPeticion);
+            if (bc== null || Cliente.ExisteCliente(bc, Cliente.getClientes())==false){
+                cabecera = crearCabecera(200, false) + saltoLinea;  
             }
+            //Tiene cookie
             else{
                 
-                cabecera = crearCabecera(200, false) + saltoLinea;
+                cabecera = crearCabecera(200, true) + saltoLinea;
             }
             if(esIndex(recursoSol) == true) {
                 try 
@@ -128,8 +149,10 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
                     tipoArchivo = tipoArchivo(ruta);
                     cabecera = cabecera + tipoArchivo + saltoLinea;
                     fichero = new FileInputStream(ruta);
+                    
                     salida.writeBytes(cabecera);
                     enviarFichero(opPeticion, fichero);
+                    
                 } catch (Exception e) {
                     ruta = RUTAPRINC+recursoSol;
                     fichero = new FileInputStream(ruta+docError);
@@ -377,9 +400,12 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
         
     }
     public String buscarCookie(ArrayList<String> cabeceraPeticion){
+        
         for(String linea: cabeceraPeticion){
-            if(linea.startsWith(etiquetaCookie)){
-                return linea;
+            if(linea.startsWith(etiquetaCookie)){               
+           
+                String[] cookie = linea.split(" ");
+                return cookie[1];
             }
         }
         return null;
