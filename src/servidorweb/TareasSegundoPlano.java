@@ -28,13 +28,10 @@ public class TareasSegundoPlano extends Thread{
             } catch (InterruptedException ex) {
                 Logger.getLogger(TareasSegundoPlano.class.getName()).log(Level.SEVERE, null, ex);
             }
-            try {
-                Cliente.elimianrExpirados(Cliente.getClientes());
-            } catch (ParseException ex) {
-                Logger.getLogger(TareasSegundoPlano.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            Cliente.ArchivarClientes(Cliente.getClientes());
             
+            Cliente.ArchivarClientes(Cliente.getClientes());
+            DirectorioVirtual.ArchivarDirectorioVirtual(DirectorioVirtual.directorios);
+            TipoMIME.ArchivartiposMime(TipoMIME.getTiposMime());
         } 
     }
 }

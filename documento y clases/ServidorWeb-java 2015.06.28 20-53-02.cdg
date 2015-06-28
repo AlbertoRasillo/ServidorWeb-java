@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<ClassDiagram name="ServidorWeb-java">
+  <ClassDiagramComponents>
+    <Class name="Cliente" package="servidorweb" visibility="public" xPosition="17.0" yPosition="598.0">
+      <Fields>
+        <Field name="NOMFICHERO" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="SEPARADOR" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="BANEADO" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="ACTIVO" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="FORMATOFECHA" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="fechaExpiracion" type="String" visibility="private"/>
+        <Field name="coockie" type="String" visibility="private"/>
+        <Field name="estado" type="String" visibility="private"/>
+        <Field name="clientes" type="ArrayList&lt;Cliente&gt;" visibility="private" isStatic="true"/>
+        <Field name="clientesBaneados" type="ArrayList&lt;Cliente&gt;" visibility="private" isStatic="true"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public"/>
+        <Constructor visibility="public">
+          <Argument type="String" name="cookie"/>
+          <Argument type="String" name="estado"/>
+          <Argument type="String" name="fechaExpiracion"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="generarId" returnType="String" visibility="public"/>
+        <Method name="getCoockie" returnType="String" visibility="public"/>
+        <Method name="getfechaExpiracion" returnType="String" visibility="public"/>
+        <Method name="getEstado" returnType="String" visibility="public"/>
+        <Method name="setCoockie" returnType="void" visibility="public">
+          <Argument type="String" name="coockie"/>
+        </Method>
+        <Method name="setEstado" returnType="void" visibility="public">
+          <Argument type="String" name="estado"/>
+        </Method>
+        <Method name="getFechaExpiracion" returnType="String" visibility="public"/>
+        <Method name="getClientes" returnType="ArrayList&lt;Cliente&gt;" visibility="public" isStatic="true"/>
+        <Method name="getClientesBaneados" returnType="ArrayList&lt;Cliente&gt;" visibility="public" isStatic="true"/>
+        <Method name="cargarClientes" returnType="ArrayList&lt;Cliente&gt;" visibility="public" isStatic="true"/>
+        <Method name="cliente2CSV" returnType="String" visibility="public"/>
+        <Method name="ArchivarClientes" returnType="void" visibility="public" isStatic="true">
+          <Argument type="ArrayList&lt;Cliente&gt;" name="clientes"/>
+        </Method>
+        <Method name="ExisteCliente" returnType="boolean" visibility="public" isStatic="true">
+          <Argument type="String" name="coockie"/>
+          <Argument type="ArrayList&lt;Cliente&gt;" name="clientes"/>
+        </Method>
+        <Method name="StringToCliente" returnType="Cliente" visibility="public" isStatic="true">
+          <Argument type="String" name="coockie"/>
+        </Method>
+        <Method name="PaginaCliente2CSV" returnType="String" visibility="public">
+          <Argument type="String" name="cliente"/>
+          <Argument type="String" name="cabecera"/>
+        </Method>
+        <Method name="ArchivarPeticionCliente" returnType="void" visibility="public" isStatic="true">
+          <Argument type="ArrayList&lt;Cliente&gt;" name="clientes"/>
+        </Method>
+        <Method name="calcularFechaExpiracion" returnType="String" visibility="public" isStatic="true"/>
+        <Method name="stringToCalendar" returnType="Calendar" visibility="public" isStatic="true">
+          <Argument type="String" name="fecha"/>
+        </Method>
+        <Method name="elimianrExpirados" returnType="void" visibility="public" isStatic="true">
+          <Argument type="ArrayList&lt;Cliente&gt;" name="clientes"/>
+        </Method>
+        <Method name="banear" returnType="boolean" visibility="public" isStatic="true">
+          <Argument type="Cliente" name="cli"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="DirectorioVirtual" package="servidorweb" visibility="public" xPosition="374.0" yPosition="136.0">
+      <Fields>
+        <Field name="SEPARADOR" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="NOMFICHERO" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="nombre" type="String" visibility="private"/>
+        <Field name="documentoPrincipal" type="String" visibility="private"/>
+        <Field name="paginaError" type="String" visibility="private"/>
+        <Field name="directorios" type="ArrayList&lt;DirectorioVirtual&gt;" visibility="public" isStatic="true"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="String" name="nombre"/>
+          <Argument type="String" name="documentoPrincipal"/>
+          <Argument type="String" name="paginaError"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getNombre" returnType="String" visibility="public"/>
+        <Method name="setNombre" returnType="void" visibility="public">
+          <Argument type="String" name="nombre"/>
+        </Method>
+        <Method name="getDocumentoPrincipal" returnType="String" visibility="public"/>
+        <Method name="setDocumentoPrincipal" returnType="void" visibility="public">
+          <Argument type="String" name="documentoPrincipal"/>
+        </Method>
+        <Method name="getPaginaError" returnType="String" visibility="public"/>
+        <Method name="setPaginaError" returnType="void" visibility="public">
+          <Argument type="String" name="paginaError"/>
+        </Method>
+        <Method name="getDirectorios" returnType="ArrayList&lt;DirectorioVirtual&gt;" visibility="public"/>
+        <Method name="setDirectorios" returnType="void" visibility="public">
+          <Argument type="ArrayList&lt;DirectorioVirtual&gt;" name="Directorios"/>
+        </Method>
+        <Method name="DirectorioVirtualToCSV" returnType="String" visibility="public"/>
+        <Method name="ArchivarDirectorioVirtual" returnType="void" visibility="public" isStatic="true">
+          <Argument type="ArrayList&lt;DirectorioVirtual&gt;" name="directorios"/>
+        </Method>
+        <Method name="cargarDirectorios" returnType="ArrayList&lt;DirectorioVirtual&gt;" visibility="public" isStatic="true"/>
+      </Methods>
+    </Class>
+    <Class name="Main" package="servidorweb" visibility="public" xPosition="1205.0" yPosition="1289.0">
+      <Fields/>
+      <Constructors/>
+      <Methods>
+        <Method name="main" returnType="void" visibility="public" isStatic="true">
+          <Argument type="String" name="args"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="ProcesoDePeticion" package="servidorweb" visibility="public" xPosition="582.0" yPosition="919.0">
+      <Fields>
+        <Field name="socket" type="Socket" visibility="private"/>
+        <Field name="RUTAPRINC" type="String" visibility="package" isStatic="true"/>
+        <Field name="recursoBaneado" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="cabecera" type="String" visibility="private" isStatic="true"/>
+        <Field name="cabeceraIndex" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="cabeceraBaneado" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="cabecera404" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="cabeceraError501" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="mensaje404" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="mensajeError404" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="cabecera200ConCookie" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="cabecera200SinCookie" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="mensajeErrorIndex" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="mensajeErrorBaneado" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="mensajeError501" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="mensajeError200Cabecera" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="mensajeErrorEnviarFichero" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="etiquetaError" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="etiquetaCookie" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="etiquetaTipMime" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="saltoLinea" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="barra" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="entrada" type="BufferedReader" visibility="package"/>
+        <Field name="salida" type="DataOutputStream" visibility="package"/>
+        <Field name="cabeceraPeticion" type="ArrayList&lt;String&gt;" visibility="package"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="Socket" name="sock"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="run" returnType="void" visibility="public"/>
+        <Method name="respuesta" returnType="void" visibility="public">
+          <Argument type="String" name="cabeceraNueva"/>
+        </Method>
+        <Method name="enviarFichero" returnType="void" visibility="public">
+          <Argument type="String" name="opPeticion"/>
+          <Argument type="FileInputStream" name="fichero"/>
+        </Method>
+        <Method name="tipoPeticion" returnType="String" visibility="public">
+          <Argument type="String" name="peticion"/>
+        </Method>
+        <Method name="buscarNombeDirVir" returnType="String" visibility="public">
+          <Argument type="String" name="recursoSol"/>
+        </Method>
+        <Method name="buscaPaginaPrincipal" returnType="String" visibility="public">
+          <Argument type="String" name="recursoSol"/>
+        </Method>
+        <Method name="buscaPaginaError" returnType="String" visibility="public">
+          <Argument type="String" name="recursoSol"/>
+        </Method>
+        <Method name="tipoArchivo" returnType="String" visibility="public">
+          <Argument type="String" name="extension"/>
+        </Method>
+        <Method name="recursoToArray" returnType="String[]" visibility="package">
+          <Argument type="String" name="ruta"/>
+        </Method>
+        <Method name="recursoSolicitado" returnType="String" visibility="public">
+          <Argument type="String" name="cabeceraHttp"/>
+        </Method>
+        <Method name="esIndex" returnType="boolean" visibility="public">
+          <Argument type="String" name="ruta"/>
+        </Method>
+        <Method name="cabeceraToArray" returnType="ArrayList&lt;String&gt;" visibility="public">
+          <Argument type="BufferedReader" name="entrada"/>
+        </Method>
+        <Method name="buscarCookie" returnType="String" visibility="public">
+          <Argument type="ArrayList&lt;String&gt;" name="cabeceraPeticion"/>
+        </Method>
+        <Method name="crearCabecera" returnType="String" visibility="public">
+          <Argument type="int" name="codigoCabecera"/>
+          <Argument type="boolean" name="cookie"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="ServidorWeb" package="servidorweb" visibility="public" xPosition="1120.0" yPosition="714.0">
+      <Fields>
+        <Field name="PUERTO" type="int" visibility="private" isFinal="true"/>
+        <Field name="estado" type="String" visibility="private"/>
+        <Field name="NUMCLIENTESDEF" type="int" visibility="private" isStatic="true"/>
+        <Field name="socketServidor" type="ServerSocket" visibility="package"/>
+        <Field name="exec" type="ExecutorService" visibility="private" isStatic="true"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public"/>
+      </Constructors>
+      <Methods>
+        <Method name="getExec" returnType="ExecutorService" visibility="public" isStatic="true"/>
+        <Method name="setExec" returnType="void" visibility="public" isStatic="true">
+          <Argument type="ExecutorService" name="exec"/>
+        </Method>
+        <Method name="run" returnType="void" visibility="public"/>
+        <Method name="getPUERTO" returnType="int" visibility="public"/>
+        <Method name="getEstado" returnType="String" visibility="public"/>
+        <Method name="getNUMCLIENTES" returnType="int" visibility="public" isStatic="true"/>
+        <Method name="setEstado" returnType="void" visibility="public">
+          <Argument type="String" name="estado"/>
+        </Method>
+        <Method name="setNUMCLIENTES" returnType="void" visibility="public">
+          <Argument type="int" name="NUMCLIENTES"/>
+        </Method>
+        <Method name="pararServidor" returnType="void" visibility="public">
+          <Argument type="ServidorWeb" name="sw"/>
+        </Method>
+      </Methods>
+    </Class>
+    <Class name="TareasSegundoPlano" package="servidorweb" visibility="public" xPosition="1582.0" yPosition="440.0">
+      <Fields/>
+      <Constructors>
+        <Constructor visibility="public"/>
+      </Constructors>
+      <Methods>
+        <Method name="run" returnType="void" visibility="public"/>
+      </Methods>
+    </Class>
+    <Class name="TipoMIME" package="servidorweb" visibility="public" xPosition="949.0" yPosition="287.0">
+      <Fields>
+        <Field name="SEPARADOR" type="String" visibility="private" isStatic="true" isFinal="true"/>
+        <Field name="extension" type="String" visibility="private"/>
+        <Field name="contentType" type="String" visibility="private"/>
+        <Field name="tiposMime" type="ArrayList&lt;TipoMIME&gt;" visibility="private" isStatic="true"/>
+        <Field name="NOMFICHERO" type="String" visibility="private" isStatic="true" isFinal="true"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public">
+          <Argument type="String" name="extension"/>
+          <Argument type="String" name="contentType"/>
+        </Constructor>
+      </Constructors>
+      <Methods>
+        <Method name="getTiposMime" returnType="ArrayList&lt;TipoMIME&gt;" visibility="public" isStatic="true"/>
+        <Method name="getExtension" returnType="String" visibility="public"/>
+        <Method name="getContentType" returnType="String" visibility="public"/>
+        <Method name="tipoMIMECSV" returnType="String" visibility="public"/>
+        <Method name="ArchivartiposMime" returnType="void" visibility="public" isStatic="true">
+          <Argument type="ArrayList&lt;TipoMIME&gt;" name="mimes"/>
+        </Method>
+        <Method name="cargarTipoMime" returnType="ArrayList&lt;TipoMIME&gt;" visibility="public" isStatic="true"/>
+      </Methods>
+    </Class>
+    <Class name="Ventana" package="servidorweb" visibility="public" xPosition="1531.0" yPosition="678.0">
+      <Fields>
+        <Field name="sw" type="ServidorWeb" visibility="package"/>
+        <Field name="Tarea" type="TareasSegundoPlano" visibility="package"/>
+        <Field name="ButtonBanear" type="javax.swing.JButton" visibility="private"/>
+        <Field name="ButtonDirecVirt" type="javax.swing.JToggleButton" visibility="private"/>
+        <Field name="ButtonMIME" type="javax.swing.JButton" visibility="private"/>
+        <Field name="ButtonMostrarCliente" type="javax.swing.JButton" visibility="private"/>
+        <Field name="EnviarRespuestas" type="javax.swing.JButton" visibility="private"/>
+        <Field name="Estado" type="javax.swing.ButtonGroup" visibility="private"/>
+        <Field name="TextClientes" type="javax.swing.JTextArea" visibility="private"/>
+        <Field name="TextContent" type="javax.swing.JTextField" visibility="private"/>
+        <Field name="TextMIME" type="javax.swing.JTextField" visibility="private"/>
+        <Field name="TextNombreDir" type="javax.swing.JTextField" visibility="private"/>
+        <Field name="TextNombrePagErr" type="javax.swing.JTextField" visibility="private"/>
+        <Field name="TextNombrePagPrin" type="javax.swing.JTextField" visibility="private"/>
+        <Field name="TextPaneRespuestas" type="javax.swing.JTextPane" visibility="private"/>
+        <Field name="TextRespuestas" type="javax.swing.JTextField" visibility="private"/>
+        <Field name="jLabel3" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel4" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel5" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel6" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel7" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel8" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jLabel9" type="javax.swing.JLabel" visibility="private"/>
+        <Field name="jPanel1" type="javax.swing.JPanel" visibility="private"/>
+        <Field name="jPanel2" type="javax.swing.JPanel" visibility="private"/>
+        <Field name="jPanel3" type="javax.swing.JPanel" visibility="private"/>
+        <Field name="jPanel4" type="javax.swing.JPanel" visibility="private"/>
+        <Field name="jPanel5" type="javax.swing.JPanel" visibility="private"/>
+        <Field name="jScrollPane1" type="javax.swing.JScrollPane" visibility="private"/>
+        <Field name="jScrollPane2" type="javax.swing.JScrollPane" visibility="private"/>
+        <Field name="jScrollPane3" type="javax.swing.JScrollPane" visibility="private"/>
+        <Field name="jTextArea1" type="javax.swing.JTextArea" visibility="public"/>
+        <Field name="of" type="javax.swing.JRadioButton" visibility="private"/>
+        <Field name="on" type="javax.swing.JRadioButton" visibility="private"/>
+      </Fields>
+      <Constructors>
+        <Constructor visibility="public"/>
+      </Constructors>
+      <Methods>
+        <Method name="initComponents" returnType="// &lt;editor-fold defaultstate=&quot;collapsed&quot; desc=&quot;Generated Code&quot;&gt;//GEN-BEGIN:initComponents void" visibility="private"/>
+        <Method name="onActionPerformed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.ActionEvent" name="evt"/>
+        </Method>
+        <Method name="ofMouseClicked" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="onMouseClicked" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="ofActionPerformed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.ActionEvent" name="evt"/>
+        </Method>
+        <Method name="EnviarRespuestasActionPerformed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.ActionEvent" name="evt"/>
+        </Method>
+        <Method name="EnviarRespuestasMouseClicked" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="ButtonMIMEMouseClicked" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="TextMIMEActionPerformed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.ActionEvent" name="evt"/>
+        </Method>
+        <Method name="formWindowClosing" returnType="void" visibility="private">
+          <Argument type="java.awt.event.WindowEvent" name="evt"/>
+        </Method>
+        <Method name="ButtonBanearActionPerformed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.ActionEvent" name="evt"/>
+        </Method>
+        <Method name="ButtonMostrarClienteActionPerformed" returnType="void" visibility="private">
+          <Argument type="java.awt.event.ActionEvent" name="evt"/>
+        </Method>
+        <Method name="ButtonBanearMouseClicked" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="ButtonMostrarClienteMouseClicked" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="ButtonDirecVirtMouseClicked" returnType="void" visibility="private">
+          <Argument type="java.awt.event.MouseEvent" name="evt"/>
+        </Method>
+        <Method name="actualizarTextArea" returnType="void" visibility="private">
+          <Argument type="String" name="texto"/>
+        </Method>
+        <Method name="redireccionarSystemStreams" returnType="void" visibility="private"/>
+      </Methods>
+    </Class>
+  </ClassDiagramComponents>
+  <ClassDiagramRelations>
+    <HasRelation name="sw" source="servidorweb.Ventana" target="servidorweb.ServidorWeb" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation name="" source="servidorweb.ProcesoDePeticion" target="servidorweb.TipoMIME" sourceCardinality="1..1" targetCardinality="0..*"/>
+    <UseRelation name="" source="servidorweb.ServidorWeb" target="servidorweb.ProcesoDePeticion" sourceCardinality="1..1" targetCardinality="0..*"/>
+    <UseRelation name="" source="servidorweb.Main" target="servidorweb.Ventana" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="Tarea" source="servidorweb.Ventana" target="servidorweb.TareasSegundoPlano" type="Aggregation" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="clientes" source="servidorweb.Cliente" target="servidorweb.Cliente" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="ArrayList&lt;Cliente&gt;"/>
+    <HasRelation name="clientesBaneados" source="servidorweb.Cliente" target="servidorweb.Cliente" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="ArrayList&lt;Cliente&gt;"/>
+    <UseRelation source="servidorweb.TipoMIME" target="servidorweb.TipoMIME" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation source="servidorweb.ServidorWeb" target="servidorweb.ServidorWeb" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <UseRelation name="" source="servidorweb.Main" target="servidorweb.ServidorWeb" sourceCardinality="1..1" targetCardinality="1..1"/>
+    <HasRelation name="tiposMime" source="servidorweb.TipoMIME" target="servidorweb.TipoMIME" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="ArrayList&lt;TipoMIME&gt;"/>
+    <HasRelation name="directorios" source="servidorweb.DirectorioVirtual" target="servidorweb.DirectorioVirtual" type="Aggregation" sourceCardinality="1..1" targetCardinality="0..*" collectionType="ArrayList&lt;DirectorioVirtual&gt;"/>
+    <UseRelation name="" source="servidorweb.ProcesoDePeticion" target="servidorweb.Cliente" sourceCardinality="1..1" targetCardinality="0..*"/>
+    <UseRelation name="" source="servidorweb.ProcesoDePeticion" target="servidorweb.DirectorioVirtual" sourceCardinality="1..1" targetCardinality="0..*"/>
+    <UseRelation source="servidorweb.Cliente" target="servidorweb.Cliente" sourceCardinality="1..1" targetCardinality="1..1"/>
+  </ClassDiagramRelations>
+</ClassDiagram>

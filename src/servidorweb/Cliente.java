@@ -99,7 +99,6 @@ public class Cliente {
                 while ((linea = br.readLine())!= null){
                     String tokens[] = linea.split(SEPARADOR);
                     Cliente obj = new Cliente(tokens[0], tokens[1],tokens[2]);
-                    System.out.println(tokens[1]);
                     if (tokens[1].equals(BANEADO)){
                         clientesBaneados.add(obj);
                     }

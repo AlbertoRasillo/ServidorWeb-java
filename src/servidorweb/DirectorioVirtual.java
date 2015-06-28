@@ -75,7 +75,7 @@ public class DirectorioVirtual {
         return sb.toString();   
     }
     
-    public static void ArchivartiposMime(ArrayList<DirectorioVirtual> directorios){
+    public static void ArchivarDirectorioVirtual(ArrayList<DirectorioVirtual> directorios){
         try{
             FileWriter fw = new FileWriter(NOMFICHERO, false); 
             

@@ -3,6 +3,8 @@ package servidorweb;
 
 import java.io.*;
 import java.net.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,20 +13,22 @@ import java.util.logging.Logger;
  *
  * @author Alberto
  */
-public class ProcesoDePeticion implements Runnable { // extends Thread{
+public class ProcesoDePeticion implements Runnable { 
     private Socket socket;
-    private int timeout;
     //ruta relativa desde src/servidorweb/web/
     static  String RUTAPRINC = "";
-    static final private String DOCPRINC = "index.html";
     static final private String recursoBaneado = "baneado.html";
     static private String cabecera = "HTTP/1.x ";
     static final private String cabeceraIndex = "HTTP/1.x " +"200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " 
                                                     + "\r\n" + "Content-Type: text/html\r\n" + "\r\n";
+    
     static final private String cabeceraBaneado = "HTTP/1.x " +"200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " 
                                                     + "\r\n" + "Content-Type: text/html\r\n" + "\r\n";
     
     static final private String cabecera404 = "HTTP/1.x "+"404 No encontrado" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " 
+                                                    + "\r\n" + "Content-Type: text/html\r\n" + "\r\n";
+    
+    static final private String cabeceraError501 = "HTTP/1.x " +"501 No implementado" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: " 
                                                     + "\r\n" + "Content-Type: text/html\r\n" + "\r\n";
     
     static final private String mensaje404 = "No se pudo enviar el mensaje de error 404";
@@ -33,7 +37,7 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
     static final private String cabecera200ConCookie = "HTTP/1.x " + "200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: ";
     
     static final private String cabecera200SinCookie = "HTTP/1.x " + "200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" 
-                                                             + "Date:" + "\r\n" + "Set-Cookie: ";
+                                                       + "Date:" + "\r\n" + "Set-Cookie: ";
     
     static final private String mensajeErrorIndex = "No se pudo enviar pagina index";
     static final private String mensajeErrorBaneado = "No se pudo enviar pagina baneado";
@@ -44,9 +48,12 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
     static final private String etiquetaCookie = "Cookie:";
     static final private String etiquetaTipMime = "Content-Type: ";
     static final private String saltoLinea = "\r\n";
+    static final private String barra = "/";
+    private static final String FORMATOFECHA ="Wdy, DD-Mon-YYYY HH:MM:SS GMT";
 
     BufferedReader entrada;
     DataOutputStream salida;
+    
     ArrayList<String> cabeceraPeticion = new ArrayList<String>();
     
     public ProcesoDePeticion(Socket sock) throws IOException{
@@ -89,6 +96,8 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
             }
          
     }
+    
+    
     public void respuesta(String cabeceraNueva) throws IOException{
         salida = new DataOutputStream(socket.getOutputStream());
         String ruta = null;
@@ -99,14 +108,16 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
         String tipoArchivo = null;
         String paginaPrincipal = null;
         String docError = null;
-
+        String nombreDV = null;
         opPeticion = tipoPeticion(cabeceraNueva);
         //obtenemos el nombre recurso que solicita el cliente
         recursoSol = recursoSolicitado(cabeceraNueva);
+        
+        nombreDV = buscarNombeDirVir(recursoSol);
         paginaPrincipal = buscaPaginaPrincipal(recursoSol);
         docError = buscaPaginaError(recursoSol);
-        String bc =buscarCookie(cabeceraPeticion);
-        ArrayList<Cliente> arrcli = Cliente.getClientesBaneados();
+        
+
         if (Cliente.ExisteCliente(buscarCookie(cabeceraPeticion), Cliente.getClientesBaneados())) {
             try {
                 ruta = RUTAPRINC + recursoBaneado;
@@ -118,10 +129,11 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
                 System.err.println();
             }
         }
+        
+        
         else {
             //No tiene cookie
-            bc =buscarCookie(cabeceraPeticion);
-            if (bc== null || Cliente.ExisteCliente(bc, Cliente.getClientes())==false){
+            if (buscarCookie(cabeceraPeticion)== null || Cliente.ExisteCliente(buscarCookie(cabeceraPeticion), Cliente.getClientes())==false){
                 cabecera = crearCabecera(200, false) + saltoLinea;  
             }
             //Tiene cookie
@@ -134,7 +146,7 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
                 {
                     ruta = RUTAPRINC + recursoSol;
                     fichero = new FileInputStream(ruta + paginaPrincipal);
-                    salida.writeBytes(cabeceraIndex);
+                    salida.writeBytes(cabecera);
                     enviarFichero(opPeticion, fichero);               
                 } 
                 catch (Exception e) 
@@ -154,8 +166,7 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
                     enviarFichero(opPeticion, fichero);
                     
                 } catch (Exception e) {
-                    ruta = RUTAPRINC+recursoSol;
-                    fichero = new FileInputStream(ruta+docError);
+                    fichero = new FileInputStream(nombreDV+barra+docError);
                     cabecera = cabecera404;
                     salida.writeBytes(cabecera);
                     enviarFichero(opPeticion, fichero);
@@ -164,85 +175,7 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
                 
             }
         }
-//        if(esIndex(recursoSol) == true)
-//        {
-//            try 
-//            {
-//                fichero = new FileInputStream(RUTAPRINC + buscaPaginaPrincipal);
-//                salida.writeBytes(cabeceraIndex);
-//                enviarFichero(opPeticion, fichero);               
-//            } 
-//            catch (Exception e) 
-//            {
-//                System.err.println(mensajeErrorIndex);
-//                System.err.println();
-//            }
-//        }
-//        else
-//        {
-//            ruta = RUTAPRINC+recursoSol;
-//            try 
-//            {
-//                fichero = new FileInputStream(ruta);
-//            } 
-//            catch (Exception ex) 
-//            {
-//                System.err.println(etiquetaError + ex.getMessage());
-//                System.err.println(mensaje404);
-//                System.err.println();
-//                try 
-//                {   //mostramos el fichero de error 404 - pagina no encontrada
-//                    fichero = new FileInputStream(RUTAPRINC+docError);
-//                    cabecera1 = cabecera404;
-//                    salida.writeBytes(cabecera1);
-//                    enviarFichero(opPeticion, fichero);
-//                    return;
-//                } 
-//                catch (Exception ex2) 
-//                {
-//                    System.err.println(etiquetaError + ex2.getMessage());
-//                    System.err.println(mensajeError404);
-//                    System.err.println();
-//                }               
-//            }
-//            //este if creo que no hace falta
-//            if (cabeceraPeticion != null)
-//                {
-//                if(buscarCookie(cabeceraPeticion)== null||
-//                    Cliente.ExisteCliente(buscarCookie(cabeceraPeticion), Cliente.getClientes()))
-//                {
-//                    Cliente client = new Cliente();
-//                    client.getCoockie();
-//                    cabecera1 = cabecera200SinCookie + client.getCoockie();
-//                    tipoArchivo = tipoArchivo(ruta);
-//                    cabecera1 = cabecera1 + tipoArchivo + "\r\n";
-//                }
-//                else if(Cliente.ExisteCliente(buscarCookie(cabeceraPeticion), Cliente.getClientesBaneados()))
-//                {
-//                    //
-//                }
-//                else
-//                {
-//                    cabecera1 = cabecera200ConCookie;
-//                    tipoArchivo = tipoArchivo(ruta);
-//                    cabecera1 = cabecera1 + tipoArchivo + "\r\n";
-//                }
-//                 // Enviamos la cabecera1 y recurso 
-//                try
-//                {
-//                    salida.writeBytes(cabecera1);
-//                    enviarFichero(opPeticion, fichero);
-//                }
-//                catch(IOException ex)
-//                {
-//                    // Quizás no ha sido posible enviar la cabecera1
-//                    System.err.println(etiquetaError + ex.getMessage());
-//                    System.err.println(mensajeError200Cabecera);
-//                    System.err.println();
-//                    return; // No se debe seguir adelante
-//                }
-//            }
-//        }    
+  
         
     }
     
@@ -272,7 +205,6 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
         
         String tipoPetic = peticion;
         String opPeticion = null;
-        System.out.println(tipoPetic);
         if (tipoPetic == null){
         //falla mirar para coger head de otra manera
             try{
@@ -292,7 +224,21 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
         //comprobar que funciona este error
         }
         return opPeticion;
-    } 
+    }
+    
+    
+    public String buscarNombeDirVir(String recursoSol){
+        String nombre = null;
+        String [] rutaVirt = recursoToArray(recursoSol);
+        for( DirectorioVirtual dv: DirectorioVirtual.directorios )
+        {
+            if( dv.getNombre().equals(rutaVirt[0] ))
+            {
+                nombre = dv.getNombre();
+            }
+        }
+        return nombre;
+    }
     
     public String buscaPaginaPrincipal(String recursoSol){
         String paginaPrincipal = null;
@@ -320,6 +266,7 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
         return docError;
     }
     
+    
     public String tipoArchivo(String extension) throws IOException{
             extension = extension.toLowerCase();
             String tipoArchivo = null;
@@ -327,28 +274,6 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
                 if (extension.endsWith(MIME.getExtension())){
                 tipoArchivo = etiquetaTipMime + MIME.getContentType()+ saltoLinea;
             }
-                
-//            if (extension.endsWith(".html")){
-//                tipoArchivo="Content-Type: text/html\r\n";
-//            }
-//            if (extension.endsWith(".htm")){
-//                tipoArchivo="Content-Type: text/html\r\n";
-//            }
-//            if (extension.endsWith(".txt")){
-//                tipoArchivo="Content-Type: text/plain\r\n";
-//            }
-//            if (extension.endsWith(".gif")){
-//                tipoArchivo="Content-Type: image/gif\r\n";
-//            }
-//            if (extension.endsWith(".jpg")){
-//                tipoArchivo="Content-Type: image/jpeg\r\n";
-//            }
-//            if (extension.endsWith(".zip")){
-//                tipoArchivo="Content-Type: image/jpeg\r\n";
-//            }
-//            if (extension.endsWith(".zip")){
-//                tipoArchivo="Content-Type: application/zip\r\n";
-//            }
         }
              return tipoArchivo;
     }
@@ -357,6 +282,7 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
         String[] campos = ruta.split("/");
         return campos;
     }
+    
     
     public String recursoSolicitado(String cabeceraHttp){
         ArrayList<String> head = new ArrayList<String>();
@@ -376,10 +302,9 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
                 }
             }
             webPeti = cabeceraHttp.substring(inicio+2, fin);
-            
-            System.out.println(webPeti);
             return webPeti;
     }
+   
     
     public boolean esIndex (String ruta){ 
         ruta+="a/";
@@ -388,17 +313,19 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
         return campos[campos.length-1].equals("a"); 
     }
 
+    
     public ArrayList<String> cabeceraToArray(BufferedReader entrada) throws IOException{
         ArrayList<String> cabeceraPeticion = new ArrayList<String>();
         String linea;
             for (int i=0; i<=7; i++){
                 linea = entrada.readLine();
-                System.out.println(linea);
                 cabeceraPeticion.add(linea);
             }
         return cabeceraPeticion;
         
     }
+    
+    
     public String buscarCookie(ArrayList<String> cabeceraPeticion){
         
         for(String linea: cabeceraPeticion){
@@ -409,6 +336,14 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
             }
         }
         return null;
+    }
+    
+    public String calcularfechaExpiracion(){
+            DateFormat df =  new  SimpleDateFormat ( "dd MMM yyyy kk:mm:ss z" ); 
+            Calendar cal   =  Calendar.getInstance(); 
+            cal.add(Calendar.DATE, 7);
+            String fecha =(cal.getTime().toGMTString());
+            return fecha;
     }
     
     
@@ -435,52 +370,14 @@ public class ProcesoDePeticion implements Runnable { // extends Thread{
             Cliente client = new Cliente();
             client.getCoockie();
             cabecera1 = cabecera200SinCookie + client.getCoockie();
+            cabecera1 = cabecera1 + "; Expires=" + calcularfechaExpiracion();
         }
-        
-//        switch (codigoRepuesta){
-//            case 200:
-//                cabecera1=cabecera1+"200 OK";
-//                break;
-//            case 404:
-//                cabecera1=cabecera1+"404 No encontrado";
-//                break;
-//            case 501:
-//                cabecera1=cabecera1+"501 No implementado";
-//                break;
+//        else{
+//            cabecera1 =  cabeceraError501;
 //        }
-//        cabecera1 = cabecera1 + "\r\n";
-//        cabecera1 = cabecera1 + "Transfer-Encoding: " + "\r\n";
-//        cabecera1 = cabecera1 + "Date: " + "\r\n";
-//        switch(tipoArchivo){
-//            // El caso -1 no devuelve nada porque lo reservamos para errores
-//            case -1:
-//                break;
-//            // MIME conocidos
-//            case 1:
-//                cabecera1=cabecera1+"Content-Type: text/html\r\n";
-//                break;
-//            case 2:
-//                cabecera1=cabecera1+"Content-Type: text/plain\r\n";
-//                break;
-//            case 3:
-//                cabecera1=cabecera1+"Content-Type: image/gif\r\n";
-//                break;
-//            case 4:
-//                cabecera1=cabecera1+"Content-Type: image/jpeg\r\n";
-//                break;
-//            case 5:
-//                cabecera1=cabecera1+"Content-Type: application/zip\r\n";
-//                break;
-//            // En casos de formatos desconocidos... (es decir, el caso 0)
-//            case 0: default:
-//                cabecera1=cabecera1+"Content-Type: application/octet-stream\r\n";
-//                break;
-//        }
-        //cabecera=cabecera1+"\r\n";
-        
         return cabecera1;
-        }
     }
+}
 
     
 

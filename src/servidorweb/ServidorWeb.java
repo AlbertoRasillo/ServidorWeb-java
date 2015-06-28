@@ -49,7 +49,6 @@ public class ServidorWeb extends Thread {
                     System.out.println(socketClien.getInetAddress().toString());
                     exec.execute (new ProcesoDePeticion(socketClien));
                      ProcesoDePeticion procesoDePeticion = new ProcesoDePeticion(socketClien);
-                    System.out.println("hilo servidor web");
                 }catch (IOException ex) {   
                     Logger.getLogger(ServidorWeb.class.getName()).log(Level.SEVERE, null, ex);
                 }

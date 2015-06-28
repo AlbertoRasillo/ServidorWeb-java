@@ -53,7 +53,7 @@ public class Main {
         TipoMIME.cargarTipoMime();
         Cliente.cargarClientes();
         DirectorioVirtual.cargarDirectorios();
-       
+        TareasSegundoPlano ts = new TareasSegundoPlano();
 
     }
 }
