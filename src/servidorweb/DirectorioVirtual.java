@@ -20,21 +20,19 @@ import java.util.ArrayList;
 public class DirectorioVirtual {
     
     private static final String SEPARADOR  = ";"; 
-     private static final String NOMFICHERO = "Directorios.txt";
+     private static final String NOMFICHERO = "Directorios";
      
     private String nombre;
     private String documentoPrincipal;
     private String paginaError;
     public static ArrayList<DirectorioVirtual> directorios = new ArrayList<DirectorioVirtual>();
-    
 
     public DirectorioVirtual(String nombre, String documentoPrincipal, String paginaError) {
         this.nombre = nombre;
         this.documentoPrincipal = documentoPrincipal;
         this.paginaError = paginaError;
     }
-
-   
+ 
     public String getNombre() {
         return nombre;
     }
@@ -93,7 +91,7 @@ public class DirectorioVirtual {
             System.out.println(ex.toString());
         }
     }
-     public static ArrayList<DirectorioVirtual> cargarClientes() throws FileNotFoundException, IOException{
+     public static ArrayList<DirectorioVirtual> cargarDirectorios() throws FileNotFoundException, IOException{
         try{
             File f = new File(NOMFICHERO);
             if (f.exists()){

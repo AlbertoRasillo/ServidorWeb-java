@@ -50,7 +50,7 @@ public class Main {
         ServidorWeb.setExec(exec);
         Ventana JF= new Ventana();
         JF.setVisible(true);
-        TipoMIME.cargarClientes();
+        TipoMIME.cargarTipoMime();
         Cliente.cargarClientes();
        
 

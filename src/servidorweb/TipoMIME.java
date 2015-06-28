@@ -72,7 +72,7 @@ public class TipoMIME {
             System.out.println(ex.toString());
         }
     }
-     public static ArrayList<TipoMIME> cargarClientes() throws FileNotFoundException, IOException{
+     public static ArrayList<TipoMIME> cargarTipoMime() throws FileNotFoundException, IOException{
         try{
             File f = new File(NOMFICHERO);
             if (f.exists()){
