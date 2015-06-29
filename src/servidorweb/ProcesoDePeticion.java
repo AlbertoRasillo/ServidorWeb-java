@@ -34,9 +34,9 @@ public class ProcesoDePeticion implements Runnable {
     static final private String mensaje404 = "No se pudo enviar el mensaje de error 404";
     static final private String mensajeError404 = "No se pudo enviar el mensaje de error 404";
     
-    static final private String cabecera200ConCookie = "HTTP/1.x " + "200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" + "Date: ";
+    static final private String cabecera200ConCookie = "HTTP/1.x " + "200 OK" + "\r\n" + "Transfer-Encoding: chunked" + "\r\n" + "Content-Encoding: gzip,deflate" + "\r\n" + "Date: ";
     
-    static final private String cabecera200SinCookie = "HTTP/1.x " + "200 OK" + "\r\n" + "Transfer-Encoding: " + "\r\n" 
+    static final private String cabecera200SinCookie = "HTTP/1.x " + "200 OK" + "\r\n" + "Transfer-Encoding: chunked" + "\r\n" + "Content-Encoding: gzip,deflate" + "\r\n" 
                                                        + "Date:" + "\r\n" + "Set-Cookie: ";
     
     static final private String mensajeErrorIndex = "No se pudo enviar pagina index";
@@ -160,8 +160,7 @@ public class ProcesoDePeticion implements Runnable {
                     ruta = RUTAPRINC+recursoSol;
                     tipoArchivo = tipoArchivo(ruta);
                     cabecera = cabecera + tipoArchivo + saltoLinea;
-                    fichero = new FileInputStream(ruta);
-                    
+                    fichero = new FileInputStream(ruta); 
                     salida.writeBytes(cabecera);
                     enviarFichero(opPeticion, fichero);
                     
